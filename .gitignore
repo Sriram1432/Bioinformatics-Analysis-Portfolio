@@ -1,0 +1,32 @@
+# Local datasets and generated outputs
+data/
+Data/
+results/
+Results/
+figures/
+Figures/
+outputs/
+cache/
+resources/
+
+# Large scientific data formats
+*.csv
+*.tsv
+*.tab
+*.xlsx
+*.rds
+*.RData
+*.mtx
+*.mtx.gz
+*.tar.gz
+*.zip
+*.webp
+*.svg
+
+# Local environments and caches
+.Rhistory
+.Rproj.user/
+__pycache__/
+.ruff_cache/
+.venv/
+.DS_Store
