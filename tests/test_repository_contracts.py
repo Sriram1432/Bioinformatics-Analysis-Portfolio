@@ -87,6 +87,22 @@ class PipelineContractTests(unittest.TestCase):
         )
         self.assertTrue(all(path.is_file() for path in runners))
 
+    def test_r_dependency_manifest_covers_namespaced_packages(self):
+        manifest = (ROOT / "requirements-r.txt").read_text(encoding="utf-8")
+        for package in ("brglm2", "digest", "png", "speckle", "svglite", "webp"):
+            self.assertIn(package, manifest)
+
+    def test_project4_contains_complete_figure_atlas_contract(self):
+        script = (
+            ROOT
+            / "Shotgun-Metagenomics-Colorectal-Cancer"
+            / "scripts"
+            / "08_scientific_visualisation.R"
+        ).read_text(encoding="utf-8")
+        self.assertIn("Figure_%02d", script)
+        self.assertIn("c(1:6, 8:13, 15, 17:24)", script)
+        self.assertIn("figure_manifest.csv", script)
+
 
 if __name__ == "__main__":
     unittest.main()

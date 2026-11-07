@@ -19,10 +19,10 @@ Projects 1, 3 and 4 require R 4.3 or newer. CRAN dependencies are listed in `req
 
 ```r
 install.packages("BiocManager")
-BiocManager::install(c("BPCells", "edgeR", "fgsea", "org.Hs.eg.db", "AnnotationDbi"))
+BiocManager::install(c("AnnotationDbi", "BPCells", "ComplexHeatmap", "edgeR", "fgsea", "org.Hs.eg.db", "speckle"))
 ```
 
-Project 1 also requires Seurat. Use `renv::snapshot()` in a reproduction environment to record exact resolved package versions; no lockfile is supplied because the original environment was not captured and an invented lockfile would be misleading.
+Project 1 also requires Seurat. Project 4's complete figure atlas uses `ComplexHeatmap`, `circlize` and `RColorBrewer`. Use `renv::snapshot()` in a reproduction environment to record exact resolved package versions; no lockfile is supplied because the original environment was not captured and an invented lockfile would be misleading.
 
 ## Lightweight validation
 

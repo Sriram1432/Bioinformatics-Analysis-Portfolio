@@ -1,10 +1,15 @@
 # Install from CRAN unless marked Bioconductor.
 data.table
+brglm2
+circlize
+digest
 ggplot2
 ggrepel
 patchwork
+png
 scales
 ragg
+RColorBrewer
 readxl
 sandwich
 lmtest
@@ -15,5 +20,7 @@ survival
 matrixStats
 hexbin
 msigdbr
-# Bioconductor: BPCells, edgeR, fgsea, org.Hs.eg.db, AnnotationDbi
+svglite
+webp
+# Bioconductor: AnnotationDbi, BPCells, ComplexHeatmap, edgeR, fgsea, org.Hs.eg.db, speckle
 # Project 1 also requires Seurat.

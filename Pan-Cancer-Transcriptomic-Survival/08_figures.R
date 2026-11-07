@@ -325,14 +325,15 @@ make_km <- function(cc, gene, number, adjusted_row, selection_note) {
         scale_fill_manual(values = cols) + scale_y_continuous(limits = c(0, 1), labels = scales::percent_format(accuracy = 1),
         expand = expansion(mult = c(0, 0.02))) + scale_x_continuous(limits = c(0, xmax), breaks = breaks,
         expand = expansion(mult = c(0, 0.01))) + labs(x = NULL, y = "Overall survival probability", colour = NULL,
-        fill = NULL, subtitle = subtitle) + theme_atlas(9.5) + theme(legend.position = "top", plot.subtitle = element_text(size = 8.7))
+        fill = NULL, subtitle = subtitle) + theme_atlas(9.5) + theme(legend.position = "top", plot.subtitle = element_text(size = 8.7),
+        plot.margin = margin(t = 14, r = 10, b = 8, l = 10))
     pr <- ggplot(risk, aes(time, Group, label = n.risk, colour = Group)) + geom_text(aes(hjust = ifelse(time ==
         0, 0, 0.5)), size = 3) + scale_colour_manual(values = cols, guide = "none") + scale_x_continuous(limits = c(0,
         xmax), breaks = breaks, expand = expansion(mult = c(0, 0.01))) + labs(x = "Overall-survival follow-up (months; source days / 30.4375)",
         y = NULL) + theme_classic(base_size = 9) + theme(axis.text.y = element_text(colour = ink), axis.line.y = element_blank(),
         axis.ticks.y = element_blank())
     combo <- pk/pr + patchwork::plot_layout(heights = c(4.5, 1.15))
-    export_plot(combo, number, paste0(cc, "_", gene, "_Kaplan_Meier"), 10.8, 8.1, paste0("Stage03/TCGA_",
+    export_plot(combo, number, paste0(cc, "_", gene, "_Kaplan_Meier"), 10.8, 8.7, paste0("Stage03/TCGA_",
         cc, "_discovery.rds; Stage07_all_adjusted_candidate_models.csv"), "Median-split unadjusted Kaplan-Meier with log-log Greenwood 95% CI and aligned risk table",
         sprintf("N = %d; deaths = %d", nrow(d), sum(d$event)), selection_note)
     group_wide <- dcast(group_stats, . ~ Group, value.var = c("N", "Events"))

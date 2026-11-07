@@ -18,6 +18,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 # ----------------------------------------------------------------------------
 
 from pathlib import Path
+import re
 import numpy as np
 import pandas as pd
 import matplotlib
@@ -732,7 +733,7 @@ def f11_mapk_enrichment() -> None:
         d[c] = pd.to_numeric(d[c], errors="coerce")
     d["label"] = d.drug_name + " [" + d.drug_id + "]"
     order = d.drop_duplicates("drug_id").sort_values("drug_id").label.tolist()
-    fig, ax = plt.subplots(figsize=(10.6, 6.4))
+    fig, ax = plt.subplots(figsize=(12.2, 7.8))
     for _, r in d.iterrows():
         x = ["Colorectal", "Pancreatic"].index(r.focus)
         y = order.index(r.label)
@@ -753,7 +754,7 @@ def f11_mapk_enrichment() -> None:
             f"{r.rank_effect:+.2f}\n(n={int(r.n_cancer)})",
             ha="center",
             va="center",
-            fontsize=7.2,
+            fontsize=6.4,
             fontweight="bold",
             color="white" if abs(r.rank_effect) > 0.37 else INK,
         )
@@ -871,7 +872,7 @@ def f13_mapk_signature_assoc() -> None:
         d[c] = pd.to_numeric(d[c], errors="coerce")
     d["label"] = d.drug + " [" + d.drug_id + "]"
     order = d[d.cancer == "Colorectal Carcinoma"].sort_values("effect").label.tolist()
-    fig, ax = plt.subplots(figsize=(10.6, 6.5))
+    fig, ax = plt.subplots(figsize=(12.2, 7.9))
     for _, r in d.iterrows():
         x = 0 if r.cancer.startswith("Colorectal") else 1
         y = order.index(r.label)
@@ -891,7 +892,7 @@ def f13_mapk_signature_assoc() -> None:
             f"{r.effect:+.2f}\nq={r.q_fdr:.2g}",
             ha="center",
             va="center",
-            fontsize=7,
+            fontsize=6.2,
             fontweight="bold",
             color="white" if abs(r.effect) > 0.4 else INK,
         )
@@ -956,7 +957,11 @@ def f14_signature_prediction() -> None:
         label="Pancreatic",
         edgecolor="white",
     )
-    ax.set_yticks(y, wide.drug + " [" + wide.drug_id + "]")
+    clean_name = wide.apply(
+        lambda row: re.sub(rf"\s*\({re.escape(str(row.drug_id))}\)\s*$", "", str(row.drug)),
+        axis=1,
+    )
+    ax.set_yticks(y, clean_name + " [" + wide.drug_id + "]")
     ax.set_xlabel("MAE(mutation model) − MAE(mutation + signature)")
     clean(ax, "x")
     ax.legend(frameon=False, loc="lower right")
