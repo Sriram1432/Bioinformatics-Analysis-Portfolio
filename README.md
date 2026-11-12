@@ -2,7 +2,7 @@
 
 This repository presents five reproducible computational biology projects spanning single-cell transcriptomics, spatial biology, cancer genomics, metagenomics and machine learning for cancer pharmacogenomics.
 
-The analyses were developed by **Sriram Gummadi**, a bioinformatics researcher at La Trobe University whose PhD thesis has been submitted and is currently under examination. The work reflects a broader interest in combining biological interpretation with robust statistical modelling, reproducible computation and scientific visualisation.
+The analyses were developed by **Sriram Gummadi**, a bioinformatics researcher at La Trobe University. The work reflects a broader interest in combining biological interpretation with robust statistical modelling, reproducible computation and scientific visualisation.
 
 ## Research projects
 
