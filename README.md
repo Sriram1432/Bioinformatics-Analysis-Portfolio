@@ -50,7 +50,6 @@ Complete numerical reproduction requires the source datasets, documented softwar
 
 Python and R dependencies are documented in [`DEPENDENCIES.md`](DEPENDENCIES.md), with package lists in [`requirements-python.txt`](requirements-python.txt) and [`requirements-r.txt`](requirements-r.txt).
 
-Each project includes a pipeline runner that stops when a script fails. Project 5 runs `03_rna_models.py` before `02_response_landscape.py` because the response analysis can use the held-out prediction table produced by the RNA models.
 
 Use dry-run mode to inspect Python execution order without running analyses:
 
