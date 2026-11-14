@@ -25,11 +25,14 @@ def main() -> None:
     missing = [str(path) for path in SCRIPTS if not path.is_file()]
     if missing:
         raise FileNotFoundError(f"Missing pipeline scripts: {missing}")
-    for script in SCRIPTS:
+    for index, script in enumerate(SCRIPTS, start=1):
         command = [sys.executable, str(script)]
-        print(" ".join(command), flush=True)
+        print(f"[{index}/{len(SCRIPTS)}] {' '.join(command)}", flush=True)
         if not args.dry_run:
-            subprocess.run(command, cwd=ROOT, check=True)
+            try:
+                subprocess.run(command, cwd=ROOT, check=True)
+            except subprocess.CalledProcessError as error:
+                raise SystemExit(f"Pipeline stopped after failure in {script.name} (exit code {error.returncode}).") from error
 
 
 if __name__ == "__main__":
