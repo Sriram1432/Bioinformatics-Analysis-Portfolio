@@ -264,7 +264,7 @@ save_plot <- function(p, name, width = 13, height = 8) {
         res = 300, background = "white")
     figure_paths <<- c(figure_paths, path)
 }
-# Report mean delta-C for EVERY gene/cancer; missing results remain unplotted, never fabricated.
+# Report mean delta-C for every gene-cancer pair; missing results remain unplotted.
 p <- ggplot2::ggplot(summary, ggplot2::aes(x = Mean_Delta_C, y = reorder(paste(Cancer, Gene, sep = "  |  "),
     Mean_Delta_C), colour = Mean_Delta_C > 0)) + ggplot2::geom_vline(xintercept = 0, linetype = "dashed",
     colour = "#60676E") + ggplot2::geom_segment(ggplot2::aes(x = 0, xend = Mean_Delta_C, yend = reorder(paste(Cancer,
@@ -842,7 +842,7 @@ for (r in seq_len(repeats)) for (k in seq_len(K)) {
         Final_covars = paste(cur, collapse = "+"), Removed = paste(repinfo$removed, collapse = "; "),
         Clinical_C = bc, Original_success = priorvalid, Clinical_status = repinfo$status)
     if (priorvalid)
-        next  # preserve previously approved estimates exactly
+        next  # retain the saved estimates
     for (g in fixed_genes) {
         row <- data.table(Cancer = cc, Gene = g, Repeat = r, Fold = k, Analysis = "Discovered_gene_conditional",
             C_clinical = bc, C_gene = NA_real_, Delta_C = NA_real_, Status = "")

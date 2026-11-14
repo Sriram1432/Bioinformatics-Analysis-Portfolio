@@ -1,6 +1,6 @@
-"""Regenerate the fourteen approved scientific atlas figures.
+"""Regenerate the fourteen project figures.
 
-Figures are assembled from validated numerical outputs, source histology and
+Figures are assembled from saved numerical outputs, source histology and
 stored spatial coordinates. The script writes high-resolution WebP and SVG
 exports while preserving the established figure order and transformations.
 """
@@ -259,7 +259,7 @@ def build_figure() -> tuple[Path, Path, list[str]]:
 
 if __name__ == "__main__":
     webp_path, svg_path, validation = build_figure()
-    print("Figure 1 generated from original H&E and validated Stage1D metadata.")
+    print("Figure 1 generated from the source H&E image and Stage1D metadata.")
     for item in validation:
         print(item)
     print(webp_path)
@@ -1319,7 +1319,7 @@ def main():
 if __name__ == "__main__":
     main()
 
-# Convert the validated twelve-composition numbering to the final fourteen-figure atlas.
+# Convert the twelve-composition numbering to the fourteen-figure atlas.
 _atlas = PROJECT_ROOT / "Results" / "Scientific_Figure_Atlas"
 _renumber = {
     12: (14, "Spatial_Gene_Set_Enrichment"),

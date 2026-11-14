@@ -298,7 +298,7 @@ try:
     fig.savefig(FIG / f"{SAMPLE}_distance_gradient.webp", dpi=260, bbox_inches="tight")
     plt.close(fig)
     log(
-        f"PASS: matched {len(df):,} spots; necrosis={int(mask.sum()):,}; other={int((~mask).sum()):,}"
+        f"Matched {len(df):,} spots; necrosis={int(mask.sum()):,}; other={int((~mask).sum()):,}"
     )
     log("\nNECROSIS VERSUS NON-NECROSIS — DESCRIPTIVE MEDIANS")
     log(overall.round(4).to_string(index=False))

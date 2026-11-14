@@ -1,6 +1,6 @@
 # Computational Biology Research Portfolio
 
-This repository presents five reproducible computational biology projects spanning single-cell transcriptomics, spatial biology, cancer genomics, metagenomics and machine learning for cancer pharmacogenomics.
+This repository contains five computational biology projects spanning single-cell transcriptomics, spatial biology, cancer genomics, metagenomics and cancer pharmacogenomics.
 
 The analyses were developed by **Sriram Gummadi**, a bioinformatics researcher at La Trobe University. The work reflects a broader interest in combining biological interpretation with robust statistical modelling, reproducible computation and scientific visualisation.
 
@@ -44,13 +44,13 @@ Multi-omics modelling of cancer drug sensitivity using RNA expression, proteomic
 - Predictive associations and model explanations are not presented as evidence of biological causality.
 - Large source datasets, intermediate results and generated figures are intentionally excluded from this repository.
 
-The scripts pass static syntax validation. Complete numerical reproduction requires the corresponding source datasets, documented software dependencies and an end-to-end execution of each workflow.
+Complete numerical reproduction requires the source datasets, documented software dependencies and execution of each workflow.
 
 ## Installation, execution and tests
 
 Python and R dependencies are documented in [`DEPENDENCIES.md`](DEPENDENCIES.md), with package lists in [`requirements-python.txt`](requirements-python.txt) and [`requirements-r.txt`](requirements-r.txt).
 
-Each project now has an explicit pipeline runner. These runners stop on the first failed script so downstream analyses cannot continue from incomplete prerequisites. Project 5 intentionally runs `03_rna_models.py` before `02_response_landscape.py` because the latter can consume the held-out prediction table produced by the RNA-model script; existing filenames are preserved for compatibility.
+Each project includes a pipeline runner that stops when a script fails. Project 5 runs `03_rna_models.py` before `02_response_landscape.py` because the response analysis can use the held-out prediction table produced by the RNA models.
 
 Use dry-run mode to inspect Python execution order without running analyses:
 
@@ -59,7 +59,7 @@ python Spatial-Transcriptomics-Breast-Cancer/run_pipeline.py --dry-run
 python Explainable-AI-Cancer-Drug-Response/run_pipeline.py --dry-run
 ```
 
-Run lightweight automated checks with:
+Run the repository tests with:
 
 ```text
 python -m unittest discover -s tests -v

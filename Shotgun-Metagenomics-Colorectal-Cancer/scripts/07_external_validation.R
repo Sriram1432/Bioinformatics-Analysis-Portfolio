@@ -963,7 +963,7 @@ fwrite(
   )
 )
 
-# ROBUST INDEPENDENT EXTERNAL VALIDATION
+# INDEPENDENT EXTERNAL VALIDATION
 #
 # A. Covariate-adjusted detection associations
 # B. Covariate-adjusted relative-abundance associations

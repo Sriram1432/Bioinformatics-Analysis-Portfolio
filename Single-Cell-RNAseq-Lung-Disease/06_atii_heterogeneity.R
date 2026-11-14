@@ -1,6 +1,5 @@
-# Project 1 | Human lung single-cell RNA sequencing Evaluate high- and low-surfactant ATII
-# subclasses and sensitivity thresholds.  Source dataset: GEO GSE136831. Clinical samples, rather
-# than individual cells, define biological replication for inferential analyses.
+# Evaluate high- and low-surfactant ATII subclasses and sensitivity thresholds in GSE136831.
+# Clinical samples are the replication unit for inference.
 
 options(stringsAsFactors = FALSE)
 

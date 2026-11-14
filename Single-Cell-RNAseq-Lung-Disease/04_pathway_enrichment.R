@@ -1,6 +1,5 @@
-# Project 1 | Human lung single-cell RNA sequencing Test Hallmark enrichment using signed
-# differential-expression statistics.  Source dataset: GEO GSE136831. Clinical samples, rather than
-# individual cells, define biological replication for inferential analyses.
+# Test Hallmark enrichment using signed differential-expression statistics from GSE136831.
+# Clinical samples are the replication unit for inference.
 
 options(stringsAsFactors = FALSE)
 

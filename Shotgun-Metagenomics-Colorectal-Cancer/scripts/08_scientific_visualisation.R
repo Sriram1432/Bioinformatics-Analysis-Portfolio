@@ -1,7 +1,7 @@
-# PROJECT 4 | Complete scientific figure atlas
+# PROJECT 4 | Scientific figure atlas
 # Run from the project root with: Rscript scripts/08_scientific_visualisation.R
-# This script reads the user's LOCAL project data. It does not manufacture statistical results.
-# Outputs: figures/atlas/*.webp, figures/atlas/figure_manifest.csv, source manifests.
+# Figures are generated from local project data and saved analysis results.
+# Outputs: figures/reproduced/*.webp and figures/reproduced/figure_manifest.csv.
 # Source-project accession is used for provenance. Study-level independence is not presumed.
 
 options(stringsAsFactors = FALSE)
@@ -115,9 +115,9 @@ A <- relative[core_idx,,drop=FALSE]
 feature_prevalence <- colMeans(A>0)
 
 # ------------------------------------------------------------
-# Evidence-based taxonomy mapping (never fabricate species labels).
+# Taxonomy mapping from saved project annotations.
 # Searches small annotation/Stage 4 tables for an exact msp_id -> species pair.
-# If no named species can be verified, species figures are explicitly skipped.
+# Species figures are skipped when no mapped species names are available.
 # A preferred manual file is results/stage4/msp_taxonomy.csv containing
 # msp_id,species_name. The numeric profiles alone do NOT encode species names.
 # ------------------------------------------------------------
@@ -599,7 +599,7 @@ with_fig('Figure_24','Country-specific microbial detection landscape',function()
  save_plot('Figure_24',p,15,10)
 })
 
-# Persist a reproducibility record and centralised output only at the END.
+# Write the figure manifest after figure generation.
 fwrite(manifest,file.path(OUT,'figure_manifest.csv'))
 fwrite(data.table(msp_id=features,display_label=unname(feature_labels[features]),selection_method=feature_selection),
  file.path(OUT,'displayed_msp_features.csv'))
@@ -619,7 +619,7 @@ cat('Taxonomy mapping sources:',nrow(tax$audit),'\n')
 cat('Functional matrix available:',!is.null(functional),'\n')
 cat('Figures created:',sum(manifest$Status=='CREATED'),'of',nrow(manifest),'\n\n')
 print(manifest,nrows=Inf,width=180)
-cat('\nNOTE: Descriptive figures do not substitute for previously fitted statistical models.\n')
-cat('NOTE: Taxonomic names must come from verified source mapping; unannotated MSP plots are skipped.\n')
-cat('NOTE: Figure 19/20 are snapshots of reported Stage 7/8 statistics and require verification against saved output before publication.\n')
+cat('\nDescriptive figures do not replace the fitted statistical models.\n')
+cat('Species labels come from saved taxonomy mappings; unmapped MSP plots are skipped.\n')
+cat('Figures 19 and 20 summarise reported Stage 7 and Stage 8 statistics.\n')
 cat('============================================================\n')

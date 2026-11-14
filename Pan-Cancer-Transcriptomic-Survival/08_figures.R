@@ -1,6 +1,6 @@
-# Regenerate the fifteen-figure transcriptomic survival atlas.  Reads validated numerical outputs,
-# reconstructs the three prespecified Kaplan-Meier displays and writes audited WebP and SVG
-# exports.  Run with: Rscript 08_figures.R
+# Regenerate the fifteen-figure transcriptomic survival atlas from saved numerical outputs.
+# Reconstructs three prespecified Kaplan-Meier displays and writes WebP and SVG exports.
+# Run with: Rscript 08_figures.R
 
 options(stringsAsFactors = FALSE)
 
@@ -17,7 +17,7 @@ resolve_project_root <- function() {
 PROJECT_ROOT <- resolve_project_root()
 
 
-# ---------------------------------------------------------------------------- Final scientific
+# ---------------------------------------------------------------------------- Figure atlas
 # figure atlas ----------------------------------------------------------------------------
 
 options(width = 180, scipen = 6)
@@ -94,8 +94,8 @@ s11b <- read_stage("Stage11B", "Stage11B_all_ranked_pathway_tests.csv")
 stopifnot(sum(cohort$Patients) == 4718L, sum(cohort$Deaths) == 1519L, setequal(cohort$Cancer, cancers),
     setequal(s05_summary$Cancer, cancers), all(c("Beta", "SE", "HR", "CI_low", "CI_high", "P", "FDR") %in%
         names(s05)), all(c("NES", "FDR", "Library", "Pathway") %in% names(s11b)))
-validation <- c(validation, "PASS: Stage03 cohort total = 4,718 unique analysed patients.", "PASS: Stage03 observed death total = 1,519.",
-    "PASS: all ten prespecified cancers present.", "PASS: Stage05 Cox and Stage11B ranked-pathway schemas validated.")
+validation <- c(validation, "Stage03 cohort total: 4,718 unique analysed patients.", "Stage03 observed death total: 1,519.",
+    "All ten prespecified cancers are present.", "Stage05 Cox and Stage11B ranked-pathway tables contain the required columns.")
 
 # Figure 01: cohort size ------------------------------------------------------
 d1 <- copy(cohort)
@@ -356,7 +356,7 @@ coad_audit[, `:=`(Stage08_diagnostic_available = Feature_ID %in% s08[Cancer == "
     Adjusted_P < 0.05 & is.finite(Adjusted_CI_low) & Adjusted_CI_low > 1)]
 setorder(coad_audit, -Eligible_adjusted, Adjusted_P, Discovery_FDR)
 coad_gene <- coad_audit[Eligible_adjusted == TRUE, Feature_ID][1]
-if (is.na(coad_gene)) stop("BLOCKED: no defensible COAD candidate with saved adjusted support")
+if (is.na(coad_gene)) stop("No eligible COAD candidate has saved adjusted support")
 coad_audit[, `:=`(Selected = Feature_ID == coad_gene, Selection_reason = fifelse(Feature_ID == coad_gene,
     "Strongest adjusted P among COAD genome-wide FDR discoveries with adjusted HR CI entirely above 1; median KM split not used for selection",
     "Not selected: lower prespecified ranking on adjusted P/precision or no saved adjusted support"),
@@ -532,17 +532,16 @@ for (i in seq_len(nrow(rendered_manifest))) {
     if (!grepl("<svg", svg_text, fixed = TRUE))
         stop("Invalid SVG: ", rendered_manifest$SVG[i])
 }
-validation <- c(validation, "PASS: Figures 01-15 exported as 300-dpi WebP and vector SVG; manifest extended through Figure 16.",
-    "PASS: Figure 03 displays exp(Beta) hazard ratios on a log scale with HR = 1 reference; no successful finite Stage05 observation was excluded by an axis limit.",
-    "PASS: Figure 04 contains 36 eligible genes selected by documented evidence-balanced rules; supplementary association data and exact methodology exported.",
-    "PASS: all 15 WebP figures visually inspected for clipping, label legibility, legends, and KM risk-table alignment.",
-    "PASS: all SVG files contain a valid SVG root.", "PASS: KM source time confirmed as days from Stage02 reports/scripts; display conversion uses days / 30.4375.",
-    "PASS: KM patient IDs unique and expression columns exactly aligned to clinical sample IDs.", sprintf("PASS: COAD gene selected by saved Cox ranking before KM rendering: %s.",
-        coad_gene), sprintf("PASS: DKK1-LUAD reconstructed gene PH P reproduces Stage08B: %.9f.", saved_p11),
-    "BLOCKED: Figure 16 was not generated because no validated clinically adjusted cancer-stratified model object, baseline hazards/covariance, or standardisation/uncertainty specification is available; no pooled KM substitute was used.",
-    "CAUTION: COAD selected gene lacks an archived Stage08 gene-specific PH diagnostic.", "CAUTION: Stage11B extremely small FDR values are displayed as supplied and require independent algorithmic validation before publication.",
-    "CAUTION: all gene/pathway findings are candidate associations, not validated biomarkers or causal mechanisms.")
-writeLines(c("PROJECT 3 FINAL FIGURE ATLAS VALIDATION REPORT", strrep("=", 54), validation), file.path(out,
+validation <- c(validation, "Figures 01-15 exported as 300-dpi WebP and vector SVG; the manifest includes Figure 16.",
+    "Figure 03 displays exp(Beta) hazard ratios on a log scale with an HR = 1 reference; finite Stage05 estimates are retained.",
+    "Figure 04 contains 36 genes selected by the documented rules; supplementary association data and methods are exported.",
+    "Each exported SVG contains an SVG root element.", "KM source time is recorded in days; display conversion uses 30.4375 days per month.",
+    "KM patient identifiers are unique and expression columns align with clinical sample identifiers.", sprintf("COAD gene selected from the saved Cox ranking before KM rendering: %s.",
+        coad_gene), sprintf("DKK1-LUAD reconstructed gene PH P matches the saved Stage08B value: %.9f.", saved_p11),
+    "Figure 16 was not generated because the saved outputs do not include the fitted stratified model, baseline hazards, covariance or a prespecified standardisation procedure.",
+    "The selected COAD gene has no archived Stage08 gene-specific PH diagnostic.", "Stage11B FDR values are displayed as stored and have not been independently recomputed.",
+    "Gene and pathway results are candidate associations, not causal or clinically validated biomarkers.")
+writeLines(c("PROJECT 3 FIGURE ATLAS AUDIT", strrep("=", 54), validation), file.path(out,
     "validation_report.txt"))
 
 summary_lines <- c("PROJECT 3 | REVISED FIGURE ATLAS (MANIFEST THROUGH FIGURE 16)", "Completion: Figures 01-15 rendered in WebP and SVG; Figure 16 scientifically blocked and not imaged",

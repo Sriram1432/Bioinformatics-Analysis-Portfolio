@@ -1,6 +1,5 @@
-# Project 1 | Human lung single-cell RNA sequencing Analyse core and cycling alveolar-macrophage
-# transcriptional programmes.  Source dataset: GEO GSE136831. Clinical samples, rather than
-# individual cells, define biological replication for inferential analyses.
+# Analyse core and cycling alveolar-macrophage transcriptional programmes in GSE136831.
+# Clinical samples are the replication unit for inference.
 
 options(stringsAsFactors = FALSE)
 

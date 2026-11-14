@@ -24,7 +24,7 @@ BiocManager::install(c("AnnotationDbi", "BPCells", "ComplexHeatmap", "edgeR", "f
 
 Project 1 also requires Seurat. Project 4's complete figure atlas uses `ComplexHeatmap`, `circlize` and `RColorBrewer`. Use `renv::snapshot()` in a reproduction environment to record exact resolved package versions; no lockfile is supplied because the original environment was not captured and an invented lockfile would be misleading.
 
-## Lightweight validation
+## Tests
 
 The automated tests do not run the scientific analyses or require source datasets:
 
@@ -32,4 +32,4 @@ The automated tests do not run the scientific analyses or require source dataset
 python -m unittest discover -s tests -v
 ```
 
-R syntax validation requires a local R installation and can be performed with `Rscript -e "parse(file='path/to/script.R')"`. Full numerical reproduction requires the documented datasets, compatible software environments and an explicitly initiated analysis run.
+These tests cover repository interfaces and small fixtures. Full numerical reproduction requires the original datasets, compatible software environments and execution of the analysis pipelines.

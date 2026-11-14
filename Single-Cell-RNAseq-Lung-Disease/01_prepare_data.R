@@ -1,6 +1,5 @@
-# Project 1 | Human lung single-cell RNA sequencing Validate GEO inputs, harmonise identifiers and
-# create the analysis checkpoint.  Source dataset: GEO GSE136831. Clinical samples, rather than
-# individual cells, define biological replication for inferential analyses.
+# Validate GEO GSE136831 inputs, harmonise identifiers and prepare the analysis objects.
+# Clinical samples are the replication unit for inference.
 
 options(stringsAsFactors = FALSE)
 

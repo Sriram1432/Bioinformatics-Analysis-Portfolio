@@ -1,6 +1,5 @@
-# Project 1 | Human lung single-cell RNA sequencing Run sample-level sensitivity analyses and
-# targeted biological diagnostics.  Source dataset: GEO GSE136831. Clinical samples, rather than
-# individual cells, define biological replication for inferential analyses.
+# Run sample-level sensitivity analyses and targeted biological diagnostics for GSE136831.
+# Clinical samples are the replication unit for inference.
 
 options(stringsAsFactors = FALSE)
 

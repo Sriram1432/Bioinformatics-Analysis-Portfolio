@@ -1,6 +1,5 @@
-# Project 1 | Human lung single-cell RNA sequencing Regenerate the approved scientific figure atlas
-# from saved analytical outputs.  Source dataset: GEO GSE136831. Clinical samples, rather than
-# individual cells, define biological replication for inferential analyses.
+# Generate the GSE136831 figure atlas from saved analysis outputs.
+# Clinical samples are the replication unit for inference.
 
 options(stringsAsFactors = FALSE)
 
@@ -274,9 +273,8 @@ if (!file.exists(file.path(CACHE_DIR, "07_analysis_models.rds"))) {
 }
 umap_path <- file.path(TABLE_DIR, "umap_plot_data.csv")
 if (!file.exists(umap_path)) stop("Required UMAP embedding missing: ", umap_path)
-# Generate the 20 approved scientific figures.  Every image is generated from analytical result
-# tables and source-derived objects.  The manifest stores a SHA-256 digest, so stale images cannot
-# pass validation.
+# Generate 20 figures from saved result tables and source-derived objects.
+# The manifest records a SHA-256 digest for each output.
 
 suppressPackageStartupMessages({
     library(data.table)
@@ -592,4 +590,4 @@ if (!identical(as.integer(manifest$Figure), setdiff(1:22, c(7L, 12L)))) {
 }
 fwrite(manifest, file.path(RUN_DIR, "figure_manifest.csv"))
 manifest <- fread(file.path(RUN_DIR, "figure_manifest.csv"), showProgress = FALSE)
-if (nrow(manifest) != 20L || any(!file.exists(file.path(FIGURE_DIR, manifest$File)))) stop("Expected 20 scientifically approved figures")
+if (nrow(manifest) != 20L || any(!file.exists(file.path(FIGURE_DIR, manifest$File)))) stop("Expected 20 figure files")

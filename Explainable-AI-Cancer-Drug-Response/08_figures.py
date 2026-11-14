@@ -1,6 +1,6 @@
 """Regenerate the fifteen-figure cancer pharmacogenomics atlas.
 
-Reads validated result tables and writes publication-oriented WebP and SVG figures with explicit scientific limitations.
+Reads saved result tables and writes WebP and SVG figures with their interpretation notes.
 
 Run from the repository root with ``python 08_figures.py``. Source files belong in
 ``Data`` beside this script and generated outputs are written to ``Results``.
@@ -14,7 +14,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 
 
 # ----------------------------------------------------------------------------
-# Final scientific figure atlas
+# Scientific figure atlas
 # ----------------------------------------------------------------------------
 
 from pathlib import Path

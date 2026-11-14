@@ -710,7 +710,7 @@ fwrite(data.table(Statement = c("Input consists of processed/batch-adjusted pan-
     "No sample exclusion, imputation, log transformation, batch correction or outcome-based adjustment performed.",
     "Cancer-wise gene z-scoring for Cox models must be TRAINING-SCOPE aware if subsequent prediction uses gene selection or fitting.",
     "Residual batch effects cannot be ruled out without independently verified batch/aliquot metadata.",
-    "The original Stage03 RDS objects remain the approved model input; Stage04 has not overwritten or regenerated them.")),
+    "The original Stage03 RDS objects remain the model input; Stage04 has not overwritten or regenerated them.")),
     file.path(out, "Stage04_methodological_boundaries.csv"))
 # Standalone figures \342\200\224 each with distinct diagnostic content, no multipanels.
 theme_pub <- function() {

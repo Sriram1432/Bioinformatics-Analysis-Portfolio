@@ -1,6 +1,5 @@
-# Project 1 | Human lung single-cell RNA sequencing Fit the primary donor-aware fibroblast, ATII
-# and macrophage pseudobulk models.  Source dataset: GEO GSE136831. Clinical samples, rather than
-# individual cells, define biological replication for inferential analyses.
+# Fit sample-level fibroblast, ATII and macrophage pseudobulk models for GSE136831.
+# Clinical samples are the replication unit for inference.
 
 options(stringsAsFactors = FALSE)
 

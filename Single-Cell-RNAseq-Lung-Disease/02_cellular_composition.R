@@ -1,6 +1,5 @@
-# Project 1 | Human lung single-cell RNA sequencing Build the lung cellular atlas and test
-# donor-level recovered-cell composition.  Source dataset: GEO GSE136831. Clinical samples, rather
-# than individual cells, define biological replication for inferential analyses.
+# Build the GSE136831 lung cell atlas and test sample-level recovered-cell composition.
+# Clinical samples are the replication unit for inference.
 
 options(stringsAsFactors = FALSE)
 
