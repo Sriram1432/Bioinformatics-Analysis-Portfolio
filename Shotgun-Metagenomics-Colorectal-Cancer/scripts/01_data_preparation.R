@@ -39,6 +39,7 @@ dt <- as.data.table(
 )
 
 
+# Standardise clinical flag values before eligibility filtering.
 normalise_flag <- function(x) {
   tolower(trimws(as.character(x)))
 }

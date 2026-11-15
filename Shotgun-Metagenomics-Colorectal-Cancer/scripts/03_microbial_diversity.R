@@ -186,6 +186,7 @@ model_group_counts <- model_data[
 ]
 
 
+# Build the adjusted model formula for an outcome.
 model_formula <- function(outcome) {
   as.formula(
     paste0(
@@ -206,6 +207,7 @@ fit_shannon <- lm(
 )
 
 
+# Extract estimates and uncertainty from a fitted model.
 extract_effects <- function(model, outcome) {
   
   V <- vcovHC(model, type = "HC3")
@@ -381,6 +383,7 @@ dt[, Log_mapped_reads := fifelse(
 dt <- dt[`class` %in% c("healthy", "CRC")]
 
 
+# Fit the study-specific model for one outcome.
 fit_study <- function(data, outcome) {
   
   study <- unique(data$study_accession)

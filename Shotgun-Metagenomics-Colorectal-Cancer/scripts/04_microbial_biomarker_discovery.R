@@ -320,6 +320,7 @@ stopifnot(
 )
 
 
+# Fit candidate.
 fit_candidate <- function(feature_id, study_id) {
   
   d <- copy(
@@ -636,6 +637,7 @@ stopifnot(
 )
 
 
+# Test adjusted detection prevalence for one microbial feature.
 prevalence_test <- function(id) {
   
   present <- as.logical(detected[id, ])

@@ -92,6 +92,7 @@ P <- sweep(
   "/"
 )
 
+# Replace exact zeros using the stated detection rule.
 replace_zeros <- function(p) {
   
   zeros <- p == 0
@@ -493,6 +494,7 @@ stopifnot(
 )
 
 
+# Fit module.
 fit_module <- function(module_id, study_id) {
   
   d <- copy(
