@@ -3,6 +3,7 @@
 Figures are assembled from saved numerical outputs, source histology and
 stored spatial coordinates. The script writes high-resolution WebP and SVG
 exports while preserving the established figure order and transformations.
+Figure labels are drawn from saved tables so plotted values remain traceable to analysis outputs.
 """
 
 from pathlib import Path

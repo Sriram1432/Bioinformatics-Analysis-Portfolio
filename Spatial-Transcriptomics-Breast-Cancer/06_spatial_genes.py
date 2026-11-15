@@ -3,6 +3,7 @@
 Moran's I is calculated on a symmetric six-neighbour spatial graph for the 800
 variance-ranked genes in each specimen. Empirical probabilities use fixed
 permutations and Benjamini-Hochberg correction within specimen.
+Recurrence summaries count independently analysed tissue sections, not patients.
 """
 
 from pathlib import Path

@@ -3,6 +3,7 @@
 The exact GO Biological Process 2025 and Reactome 2022 snapshots are embedded
 to prevent library drift. Enrichment is tested against each specimen's 800-gene
 screening universe and is not interpreted as pathway activation.
+Cross-tumour recurrence is summarised only after specimen-level enrichment is complete.
 """
 
 from pathlib import Path
@@ -485,7 +486,7 @@ try:
         "Focused findings from Stages 4A–4C remain SINGLE-TUMOUR or THREE-TUMOUR descriptive analyses, not replicated clinical effects."
     )
     log(
-        "NEXT: examine images/histological overlays and select a few coherent recurrent programmes for final figures and robustness checks."
+        "Review histological overlays alongside recurrent programmes when selecting final figures and sensitivity summaries."
     )
     log(f"OUTPUTS: {OUT}")
 except Exception as ex:

@@ -3,6 +3,7 @@
 The analyses cover hypoxia around necrosis, immune-associated distance patterns,
 DCIS programme contrasts and robustness to neighbourhood or sequencing-depth
 choices. All conclusions remain descriptive and specimen-aware.
+Distance analyses use spot coordinates and should not be read as single-cell measurements.
 """
 
 from pathlib import Path
