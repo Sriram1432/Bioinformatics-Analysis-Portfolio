@@ -52,10 +52,12 @@ FDR = 0.05
 report, errors, records, stats = [], [], [], []
 
 
+# Write a progress message to the analysis log.
 def log(s=""):
     report.append(str(s))
 
 
+# Apply Benjamini-Hochberg correction to finite p-values.
 def bh(p):
     p = np.asarray(p, dtype=float)
     order = np.argsort(p)
@@ -69,6 +71,7 @@ def bh(p):
     return adjusted
 
 
+# Download and cache the requested gene-set collection.
 def fetch_gmt(library):
     destination = CACHE / (library + ".gmt")
     if not destination.exists() or destination.stat().st_size == 0:
@@ -99,6 +102,7 @@ def fetch_gmt(library):
     return pathways
 
 
+# Test pathway overrepresentation against the supplied universe.
 def enrich(sample, library, pathways, data):
     universe = set(data["gene_symbol"].str.upper())
     selected = set(data.nlargest(TOP_N, "moran_I")["gene_symbol"].str.upper())
@@ -290,10 +294,12 @@ SUBTYPE = {s: ("ER" if s in ("CID4290", "CID4535") else "TNBC") for s in SAMPLES
 lines = []
 
 
+# Write a progress message to the analysis log.
 def log(s=""):
     lines.append(str(s))
 
 
+# Read the required saved result table.
 def read(stage, name, required):
     p = BASE / stage / name
     if not p.is_file():

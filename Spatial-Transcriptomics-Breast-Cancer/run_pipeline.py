@@ -13,6 +13,7 @@ SCRIPTS = tuple(ROOT / f"{number:02d}_{name}.py" for number, name in enumerate((
 ), start=1))
 
 
+# Run this analysis block and write its outputs.
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dry-run", action="store_true", help="Print commands without executing analyses.")

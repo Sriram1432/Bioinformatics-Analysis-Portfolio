@@ -344,6 +344,7 @@ SAMPLE_COLORS = {
 }
 
 
+# Apply the shared figure style and colour settings.
 def setup_style():
     plt.rcParams.update(
         {
@@ -359,6 +360,7 @@ def setup_style():
     )
 
 
+# Write a result table to the current output directory.
 def save(fig, number: int, slug: str) -> tuple[Path, Path]:
     OUT.mkdir(parents=True, exist_ok=True)
     webp = OUT / f"Figure{number:02d}_{slug}.webp"
@@ -371,6 +373,7 @@ def save(fig, number: int, slug: str) -> tuple[Path, Path]:
     return webp, svg
 
 
+# Add an inset axis at a fixed relative position.
 def inset(ax, text, x=0.018, y=0.975, size=10):
     ax.text(
         x,
@@ -392,12 +395,14 @@ def inset(ax, text, x=0.018, y=0.975, size=10):
     )
 
 
+# Clean labels before tables or figures are assembled.
 def clean(ax):
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.tick_params(width=0.8)
 
 
+# Load the specimen metadata required for figure assembly.
 def load_meta(sample):
     d = pd.read_csv(RESULTS / "Stage1D" / f"{sample}_spot_metadata.csv")
     req = {
@@ -417,6 +422,7 @@ def load_meta(sample):
     return d
 
 
+# Load spatial signature scores for the selected specimen.
 def load_scores(sample):
     d = pd.read_csv(RESULTS / "Stage3B" / f"{sample}_spatial_programme_scores.csv")
     if {"barcode", *PROGRAMMES} - set(d):
@@ -424,6 +430,7 @@ def load_scores(sample):
     return d
 
 
+# Join spot metadata to molecular programme scores.
 def merged_meta_scores(sample):
     a, b = load_meta(sample), load_scores(sample)
     if len(a) != len(b) or set(a.barcode) != set(b.barcode):
@@ -431,6 +438,7 @@ def merged_meta_scores(sample):
     return a.merge(b[["barcode", *PROGRAMMES]], on="barcode", validate="one_to_one")
 
 
+# Load and orient the source histology image.
 def histology(tf, sample):
     prefix = f"spatial/{sample}_spatial/"
     imh = tf.extractfile(prefix + "tissue_hires_image.png")
@@ -442,6 +450,7 @@ def histology(tf, sample):
     return image, scale
 
 
+# Return aligned spot coordinates and image scaling.
 def spatial_geometry(df, image, scale):
     x = df.pixel_col.to_numpy(float) * scale
     y = df.pixel_row.to_numpy(float) * scale
@@ -458,6 +467,7 @@ def spatial_geometry(df, image, scale):
     return x, y, bounds
 
 
+# Draw the oriented histology image on an axis.
 def show_hist(ax, image, bounds):
     left, right, top, bottom = bounds
     ax.imshow(image, origin="upper", interpolation="nearest")
@@ -471,6 +481,7 @@ def show_hist(ax, image, bounds):
         s.set_color("black")
 
 
+# Draw a molecular score over spatial coordinates.
 def score_overlay(fig, ax, image, x, y, bounds, values, label, rings=None):
     show_hist(ax, image, bounds)
     lim = float(np.percentile(np.abs(values), 98))
@@ -506,6 +517,7 @@ def score_overlay(fig, ax, image, x, y, bounds, values, label, rings=None):
     cb.ax.tick_params(labelsize=8)
 
 
+# Draw a labelled matrix heatmap.
 def heatmap(ax, matrix, xlabels, ylabels, cmap, norm, annotate=True):
     im = ax.imshow(matrix, aspect="auto", interpolation="nearest", cmap=cmap, norm=norm)
     ax.set_xticks(range(len(xlabels)), xlabels, rotation=38, ha="right")
@@ -529,6 +541,7 @@ def heatmap(ax, matrix, xlabels, ylabels, cmap, norm, annotate=True):
     return im
 
 
+# Build Figure 02.
 def figure02():
     chosen = ["1160920F", "CID44971"]
     fig = plt.figure(figsize=(18, 9.7), facecolor="white")
@@ -656,6 +669,7 @@ def figure02():
     return save(fig, 2, "Transcriptional_Heterogeneity_Pathology")
 
 
+# Build Figure 03.
 def figure03():
     d = pd.read_csv(RESULTS / "Stage3B" / "Stage3B_cluster_programme_scores.csv")
     req = {"sample", "programme", "cluster", "n_spots", "mean_score"}
@@ -690,6 +704,7 @@ def figure03():
     return save(fig, 3, "Molecular_Programmes_Transcriptional_Regions")
 
 
+# Build Figure 04.
 def figure04():
     d = pd.read_csv(RESULTS / "Stage3B" / "Stage3B_programme_summary.csv")
     q = d.pivot(
@@ -713,6 +728,7 @@ def figure04():
     return save(fig, 4, "Cross_Tumour_Spatial_Organisation")
 
 
+# Build Figure 05.
 def figure05():
     sample = "1142243F"
     df = merged_meta_scores(sample)
@@ -750,6 +766,7 @@ def figure05():
     return save(fig, 5, "Hypoxia_Necrosis_Histology")
 
 
+# Build Figure 06.
 def figure06():
     d = pd.read_csv(RESULTS / "Stage4A" / "1142243F_signed_distance_and_scores.csv")
     req = {"is_necrosis", "signed_necrosis_distance_array", "Hypoxia_associated"}
@@ -812,6 +829,7 @@ def figure06():
     return save(fig, 6, "Hypoxia_Necrosis_Distance_Gradient")
 
 
+# Build Figure 07.
 def figure07():
     samples = ["1160920F", "CID44971", "CID4535"]
     progs = ["T_cell_associated", "B_plasma_associated"]
@@ -844,6 +862,7 @@ def figure07():
     return save(fig, 7, "Immune_Associated_Molecular_Architecture")
 
 
+# Build Figure 08.
 def figure08():
     bands = pd.read_csv(RESULTS / "Stage4B" / "Stage4B_immune_distance_bands.csv")
     robust = pd.read_csv(
@@ -891,6 +910,7 @@ def figure08():
     return save(fig, 8, "Immune_Associated_Distance_Gradients")
 
 
+# Build Figure 09.
 def figure09():
     sample = "CID44971"
     df = merged_meta_scores(sample)
@@ -941,6 +961,7 @@ def figure09():
     return save(fig, 9, "DCIS_Associated_Molecular_Heterogeneity")
 
 
+# Build Figure 10.
 def figure10():
     d = pd.read_csv(RESULTS / "Stage6B" / "DCIS_Contrast_Depth_Sensitivity.csv")
     d = d.set_index("programme").reindex(PROGRAMMES).reset_index()
@@ -983,6 +1004,7 @@ def figure10():
     return save(fig, 10, "Histopathological_Programme_Contrasts")
 
 
+# Select recurrent genes.
 def select_recurrent_genes():
     all_rows = []
     for s in SAMPLES:
@@ -1058,6 +1080,7 @@ def select_recurrent_genes():
     return matrix
 
 
+# Build Figure 11.
 def figure11():
     q = select_recurrent_genes()
     a = q.to_numpy(float)
@@ -1144,6 +1167,7 @@ PATHWAY_SELECTION = [
 ]
 
 
+# Build Figure 12.
 def figure12():
     rows = []
     for sample in SAMPLES:
@@ -1190,6 +1214,7 @@ def figure12():
     finite = audit.loc[audit.tested & (audit.overlap > 0), "fold"]
     vmax = max(3, float(np.nanpercentile(np.log2(finite), 98)))
 
+    # Scale enrichment points by the number of contributing genes.
     def enrichment_size(fold):
         return 34 + 42 * min(vmax, max(0, float(np.log2(fold))))
 
@@ -1293,6 +1318,7 @@ def figure12():
     return save(fig, 12, "Spatial_Gene_Set_Enrichment")
 
 
+# Run this analysis block and write its outputs.
 def main():
     setup_style()
     OUT.mkdir(parents=True, exist_ok=True)
@@ -1386,6 +1412,7 @@ CLUSTER_COLOURS = [
 ]
 
 
+# Apply the shared figure style and colour settings.
 def setup_style():
     plt.rcParams.update(
         {
@@ -1404,6 +1431,7 @@ def setup_style():
     )
 
 
+# Load the Stage 2E outputs used by the figure atlas.
 def load_stage2e(sample):
     emb = pd.read_csv(STAGE2E / f"{sample}_log_zscore_spot_clusters_UMAP.csv")
     meta = pd.read_csv(STAGE1D / f"{sample}_spot_metadata.csv")
@@ -1427,6 +1455,7 @@ def load_stage2e(sample):
     return data
 
 
+# Create the display label used for a specimen.
 def specimen_label(ax, sample, n):
     ax.text(
         0.02,
@@ -1448,6 +1477,7 @@ def specimen_label(ax, sample, n):
     )
 
 
+# Build a consistent legend for spatial clusters.
 def cluster_legend(ax, data):
     counts = data.groupby("cluster").size().sort_index()
     handles = [
@@ -1478,6 +1508,7 @@ def cluster_legend(ax, data):
     )
 
 
+# Write a result table to the current output directory.
 def save(fig, basename):
     webp = OUT / f"{basename}.webp"
     svg = OUT / f"{basename}.svg"
@@ -1487,6 +1518,7 @@ def save(fig, basename):
     return webp, svg
 
 
+# Build the Figure 02 UMAP panel.
 def figure02_umap():
     fig, axes = plt.subplots(2, 3, figsize=(17.4, 11.2), facecolor="white")
     for ax, sample in zip(axes.flat, SAMPLES):
@@ -1513,6 +1545,7 @@ def figure02_umap():
     return save(fig, "Figure02_Transcriptional_UMAP_Atlas")
 
 
+# Build the Figure 03 spatial-cluster panel.
 def figure03_spatial_clusters():
     fig, axes = plt.subplots(2, 3, figsize=(17.4, 11.4), facecolor="white")
     for ax, sample in zip(axes.flat, SAMPLES):
@@ -1541,6 +1574,7 @@ def figure03_spatial_clusters():
     return save(fig, "Figure03_Spatial_Transcriptional_Clusters")
 
 
+# Load the marker-expression matrix used in the figure.
 def load_marker_matrix(sample):
     top = pd.read_csv(STAGE3A / f"{sample}_top_descriptive_markers.csv")
     full = pd.read_csv(STAGE3A / f"{sample}_all_gene_descriptive_contrasts.csv.gz")
@@ -1569,6 +1603,7 @@ def load_marker_matrix(sample):
     return matrix
 
 
+# Build the Figure 04 marker-expression panel.
 def figure04_marker_expression():
     fig, axes = plt.subplots(2, 3, figsize=(18.2, 12.4), facecolor="white")
     summary = pd.read_csv(STAGE3A / "Stage3A_sample_summary.csv").set_index("sample")
@@ -1602,6 +1637,7 @@ def figure04_marker_expression():
     return save(fig, "Figure04_Cluster_Associated_Marker_Expression")
 
 
+# Run this analysis block and write its outputs.
 def main():
     setup_style()
     OUT.mkdir(parents=True, exist_ok=True)
