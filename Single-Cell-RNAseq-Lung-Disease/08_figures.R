@@ -1,5 +1,6 @@
 # Generate the GSE136831 figure atlas from saved analysis outputs.
 # Clinical samples are the replication unit for inference.
+# Figure assembly reads existing result tables and does not refit statistical models.
 
 options(stringsAsFactors = FALSE)
 

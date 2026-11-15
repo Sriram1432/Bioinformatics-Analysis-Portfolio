@@ -1,5 +1,6 @@
 # Run sample-level sensitivity analyses and targeted biological diagnostics for GSE136831.
 # Clinical samples are the replication unit for inference.
+# These diagnostics qualify the primary contrasts; they are not an additional discovery screen.
 
 options(stringsAsFactors = FALSE)
 

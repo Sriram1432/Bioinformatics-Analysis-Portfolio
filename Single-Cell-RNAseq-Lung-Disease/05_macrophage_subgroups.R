@@ -1,5 +1,6 @@
 # Analyse core and cycling alveolar-macrophage transcriptional programmes in GSE136831.
 # Clinical samples are the replication unit for inference.
+# Subgroup labels describe expression patterns and do not establish distinct cell lineages.
 
 options(stringsAsFactors = FALSE)
 

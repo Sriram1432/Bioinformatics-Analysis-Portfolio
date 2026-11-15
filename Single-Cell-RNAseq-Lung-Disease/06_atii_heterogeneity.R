@@ -1,5 +1,6 @@
 # Evaluate high- and low-surfactant ATII subclasses and sensitivity thresholds in GSE136831.
 # Clinical samples are the replication unit for inference.
+# Threshold analyses are reported as sensitivity checks rather than separate confirmatory tests.
 
 options(stringsAsFactors = FALSE)
 
