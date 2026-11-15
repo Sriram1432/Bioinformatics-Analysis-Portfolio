@@ -5,6 +5,7 @@
 
 options(stringsAsFactors = FALSE)
 
+# Resolve the project directory for direct and pipeline execution.
 resolve_project_root <- function() {
     configured <- Sys.getenv("PROJECT3_ROOT", unset = "")
     if (nzchar(configured))
@@ -203,6 +204,7 @@ for (p in c("ggplot2", "ragg")) if (!requireNamespace(p, quietly = TRUE)) stop("
 fig_dir <- file.path(out_dir, "Figures")
 dir.create(fig_dir, recursive = TRUE, showWarnings = FALSE)
 figure_paths <- character()
+# Define the publication plotting theme.
 publication_theme <- function(base = 13) {
     ggplot2::theme_minimal(base_size = base) + ggplot2::theme(plot.title = ggplot2::element_text(face = "bold",
         colour = "black", size = 18, margin = ggplot2::margin(b = 8)), plot.subtitle = ggplot2::element_text(colour = "black",
@@ -212,6 +214,7 @@ publication_theme <- function(base = 13) {
         face = "bold"), panel.grid.minor = ggplot2::element_blank(), panel.grid.major = ggplot2::element_line(colour = "#E9EDF1",
         linewidth = 0.25), plot.margin = ggplot2::margin(14, 22, 16, 14))
 }
+# Export a figure with consistent settings.
 save_fig <- function(g, filename, w = 4200, h = 3000) {
     f <- file.path(fig_dir, filename)
     ragg::agg_webp(filename = f, width = w, height = h, res = 300, quality = 96)

@@ -5,6 +5,7 @@
 
 options(stringsAsFactors = FALSE)
 
+# Resolve the project directory for direct and pipeline execution.
 resolve_project_root <- function() {
     configured <- Sys.getenv("PROJECT3_ROOT", unset = "")
     if (nzchar(configured))
@@ -41,6 +42,7 @@ empty_fit <- function(reason) {
         status = reason)
 }
 
+# Fit one gene-level Cox model with guarded failure handling.
 fit_one <- function(z, fit_data) {
     if (any(!is.finite(z)) || !is.finite(stats::sd(z)) || stats::sd(z) < 1e-10)
         return(empty_fit("zero_or_near_zero_variance"))
@@ -161,6 +163,7 @@ make_theme <- function() ggplot2::theme_minimal(base_size = 14) + ggplot2::theme
     plot.caption = ggplot2::element_text(colour = "black", size = 9), axis.title = ggplot2::element_text(face = "bold",
         colour = "black"), axis.text = ggplot2::element_text(face = "bold", colour = "black"), legend.title = ggplot2::element_text(face = "bold",
         colour = "black"), panel.grid.minor = ggplot2::element_blank(), panel.grid.major.y = ggplot2::element_blank())
+# Export the publication figure in WebP format.
 save_publication_webp <- function(plot, filename, w = 3600L, h = 2600L) {
     path <- file.path(figure_dir, filename)
     ragg::agg_webp(filename = path, width = w, height = h, res = 300, quality = 96)

@@ -5,6 +5,7 @@
 
 options(stringsAsFactors = FALSE)
 
+# Resolve the project directory for direct and pipeline execution.
 resolve_project_root <- function() {
     configured <- Sys.getenv("PROJECT3_ROOT", unset = "")
     if (nzchar(configured))
@@ -37,6 +38,7 @@ cancers <- c("BRCA", "COAD", "GBM", "HNSC", "KIRC", "LUAD", "LUSC", "OV", "PAAD"
 
 files <- list.files(data_dir, recursive = TRUE, full.names = TRUE)
 files <- files[!dir.exists(files)]
+# Require a single matching source file.
 find_unique <- function(name) {
     hits <- files[basename(files) == name]
     if (length(hits) != 1L)
@@ -171,6 +173,7 @@ for (p in c("data.table", "ggplot2", "ragg")) if (!requireNamespace(p, quietly =
     p)
 suppressPackageStartupMessages(library(data.table))
 data_dir <- file.path(root, "Data")
+# Require a single matching source file.
 find_one <- function(nm) {
     p <- list.files(data_dir, recursive = TRUE, full.names = TRUE)
     p <- p[basename(p) == nm]
@@ -304,6 +307,7 @@ dir.create(figdir, recursive = TRUE, showWarnings = FALSE)
 for (p in c("data.table", "ggplot2", "ragg")) if (!requireNamespace(p, quietly = TRUE)) stop("Install package: ",
     p)
 suppressPackageStartupMessages(library(data.table))
+# Require a single matching source file.
 find_one <- function(filename) {
     f <- list.files(file.path(root, "Data"), recursive = TRUE, full.names = TRUE)
     h <- f[basename(f) == filename]
@@ -430,6 +434,7 @@ for (p in c("data.table", "ggplot2", "survival", "ragg")) {
 suppressPackageStartupMessages(library(data.table))
 ccs <- c("BRCA", "COAD", "GBM", "HNSC", "KIRC", "LUAD", "LUSC", "OV", "PAAD", "UCEC")
 files <- list.files(indir, full.names = TRUE, recursive = TRUE)
+# Locate a required input file.
 getfile <- function(nm) {
     hits <- files[basename(files) == nm]
     if (length(hits) != 1L)
@@ -441,6 +446,7 @@ phe_file <- getfile("TCGA_phenotype_denseDataOnlyDownload.tsv.gz")
 exp_file <- getfile("EB++AdjustPANCAN_IlluminaHiSeq_RNASeqV2.geneExp.xena.gz")
 cli <- data.table::fread(clinical_file, showProgress = FALSE)
 phe <- data.table::fread(phe_file, showProgress = FALSE)
+# Check required fields before continuing.
 check <- function(d, cols, nm) if (length(setdiff(cols, names(d)))) stop(nm, " missing: ", paste(setdiff(cols,
     names(d)), collapse = ", "))
 check(cli, c("sample", "_PATIENT", "cancer type abbreviation", "OS", "OS.time"), "Clinical")
@@ -538,6 +544,7 @@ muted <- "#526175"
 teal <- "#0E7490"
 rust <- "#CF563C"
 blue <- "#2563A6"
+# Define the publication plotting theme.
 theme_pub <- function(base = 13) ggplot2::theme_minimal(base_size = base, base_family = "sans") + ggplot2::theme(plot.title = ggplot2::element_text(face = "bold",
     colour = ink, size = base + 4, margin = ggplot2::margin(b = 8)), plot.subtitle = ggplot2::element_text(colour = muted,
     size = base - 1, margin = ggplot2::margin(b = 15)), axis.title = ggplot2::element_text(face = "bold",
@@ -545,6 +552,7 @@ theme_pub <- function(base = 13) ggplot2::theme_minimal(base_size = base, base_f
     colour = ink), panel.grid.minor = ggplot2::element_blank(), panel.grid.major.y = ggplot2::element_blank(),
     legend.title = ggplot2::element_text(face = "bold", colour = ink), plot.margin = ggplot2::margin(22,
         24, 22, 22))
+# Export a plot with consistent dimensions.
 saveplot <- function(plot, name, w = 12, h = 7) {
     fp <- file.path(figdir, paste0(name, ".webp"))
     ggplot2::ggsave(fp, plot, width = w, height = h, units = "in", dpi = 320, device = ragg::agg_webp,

@@ -5,6 +5,7 @@
 
 options(stringsAsFactors = FALSE)
 
+# Resolve the project directory for direct and pipeline execution.
 resolve_project_root <- function() {
     configured <- Sys.getenv("PROJECT3_ROOT", unset = "")
     if (nzchar(configured))
@@ -32,6 +33,7 @@ for (pkg in c("data.table", "matrixStats", "ggplot2", "ragg")) if (!requireNames
 suppressPackageStartupMessages(library(data.table))
 cancers <- c("BRCA", "COAD", "GBM", "HNSC", "KIRC", "LUAD", "LUSC", "OV", "PAAD", "UCEC")
 inputs <- list.files(file.path(root, "Data"), recursive = TRUE, full.names = TRUE)
+# Locate a required input file.
 getfile <- function(name) {
     z <- inputs[basename(inputs) == name]
     if (length(z) != 1L)
@@ -249,6 +251,7 @@ for (pkg in c("data.table", "survival", "ggplot2", "ragg")) if (!requireNamespac
 suppressPackageStartupMessages(library(data.table))
 set.seed(20261102)
 cancers <- c("COAD", "OV", "UCEC")
+# Require an analysis input before continuing.
 require_file <- function(p) {
     if (!file.exists(p))
         stop("Missing required file: ", p)
@@ -356,6 +359,7 @@ clean_chr <- function(x) {
         "NOT REPORTED")] <- NA_character_
     z
 }
+# Collapse detailed tumour stage labels into analysis groups.
 major_stage <- function(x) {
     z <- gsub("^STAGE[[:space:]]*", "", clean_chr(x))
     y <- rep(NA_character_, length(z))
@@ -420,6 +424,7 @@ for (cc in cancers) {
             HR = NA_real_, CI_low = NA_real_, CI_high = NA_real_, P = NA_real_, Status = "NOT_ESTIMABLE_GROUP_LT10")
         next
     }
+    # Fit a model and return a structured failure when needed.
     safe_fit <- function(formula, d) {
         w <- character()
         fit <- withCallingHandlers(tryCatch(survival::coxph(formula, data = d, ties = "efron", control = survival::coxph.control(iter.max = 50)),
@@ -599,6 +604,7 @@ miss <- fread(missfile)
 required_miss <- c("Cancer", "Patient", "Missing_features")
 if (!all(required_miss %in% names(miss))) stop("Stage03 missingness schema differs")
 if (anyDuplicated(miss[, .(Cancer, Patient)])) stop("Duplicate Stage03 patient/missingness records")
+# Stop if a numeric result contains non-finite values.
 check_finite <- function(x, lab) {
     if (any(!is.finite(x)))
         stop(lab, ": unexpectedly nonfinite expression")
@@ -722,6 +728,7 @@ theme_pub <- function() {
         plot.caption = ggplot2::element_text(colour = "black", size = 9), panel.grid.minor = ggplot2::element_blank(),
         panel.grid.major.x = ggplot2::element_blank())
 }
+# Export a plot as a WebP file.
 save_webp <- function(p, name, width = 3600, height = 2100) {
     path <- file.path(figdir, name)
     ragg::agg_webp(path, width = width, height = height, res = 300, quality = 96)
