@@ -1,6 +1,7 @@
 # Integrate cancer-specific effects and quantify cross-cancer heterogeneity.  Combines stratified
 # Cox estimates, recurrence summaries and heterogeneity statistics while retaining cancer-specific
 # effect directions.  Run with: Rscript 04_pan_cancer_analysis.R
+# Pooled summaries supplement rather than replace the cancer-specific estimates.
 
 options(stringsAsFactors = FALSE)
 

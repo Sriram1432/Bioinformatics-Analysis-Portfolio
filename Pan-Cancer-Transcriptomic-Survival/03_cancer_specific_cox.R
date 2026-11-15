@@ -1,6 +1,7 @@
 # Fit cancer-specific genome-wide Cox proportional-hazards models.  Expression is standardised
 # within cancer and false-discovery rates are controlled within each cancer-specific testing
 # family.  Run with: Rscript 03_cancer_specific_cox.R
+# Hazard ratios are reported per within-cancer expression standard deviation.
 
 options(stringsAsFactors = FALSE)
 
@@ -147,7 +148,7 @@ for (cancer in cancers) {
 summary_dt <- data.table::rbindlist(all_summaries)
 top_dt <- data.table::rbindlist(all_tops)
 status_dt <- data.table::rbindlist(all_status)
-if (sum(summary_dt$Patients) != 4718L || sum(summary_dt$Events) != 1519L) stop("Cross-cancer patient/event totals differ from validated Stage03 totals")
+if (sum(summary_dt$Patients) != 4718L || sum(summary_dt$Events) != 1519L) stop("Cross-cancer patient/event totals differ from the saved Stage03 reference totals")
 data.table::fwrite(summary_dt, file.path(output_dir, "Stage05_cancer_specific_summary.csv"))
 data.table::fwrite(top_dt, file.path(output_dir, "Stage05_top10_per_cancer.csv"))
 data.table::fwrite(status_dt, file.path(output_dir, "Stage05_model_status.csv"))

@@ -1,6 +1,7 @@
 # Define the ten TCGA cohorts and validate patient-level survival records.  Inventories the source
 # files, resolves duplicate specimens and constructs the established 4,718-patient analysis
 # population without altering the original data.  Run with: Rscript 01_prepare_cohorts.R
+# Cohort totals are checked before any expression or survival modelling is attempted.
 
 options(stringsAsFactors = FALSE)
 
@@ -98,7 +99,7 @@ issues <- data.table(Check = c("Expression header duplicates", "Clinical rows: t
         expr_unique), length(exids)))
 fwrite(issues, file.path(out, "Stage01_identifier_diagnostics.csv"))
 
-# One scientifically informative, standalone inventory figure (not a biological result).
+# Standalone cohort inventory figure; this is a data summary, not a biological result.
 plot_data <- melt(coverage[, .(cancer, Clinical_rows, Primary_annotated, Primary_with_unique_expression)],
     id.vars = "cancer", variable.name = "Availability", value.name = "Records")
 plot_data[, Availability := factor(Availability, levels = c("Clinical_rows", "Primary_annotated",

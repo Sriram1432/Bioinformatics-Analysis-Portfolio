@@ -1,6 +1,7 @@
 # Validate transcript identifiers, missingness and expression structure.  Creates cancer-specific
 # discovery objects, documents structured missingness and checks residual expression patterns
 # before survival modelling.  Run with: Rscript 02_expression_integrity.R
+# Diagnostic flags are retained for review and are not used as automatic exclusion rules.
 
 options(stringsAsFactors = FALSE)
 
