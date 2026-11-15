@@ -1,6 +1,7 @@
 """Validate and harmonise the pharmacogenomic source data.
 
 Audits GDSC2 responses, model identifiers and multi-omics availability without treating cell lines as patients.
+Identifier joins are audited before assay tables are reduced to the modelling cohort.
 
 Run from the repository root with ``python 01_prepare_data.py``. Source files belong in
 ``Data`` beside this script and generated outputs are written to ``Results``.
@@ -575,7 +576,7 @@ if __name__ == "__main__":
         main()
     except Exception as exc:
         phase1_failure = exc
-        warn("UNHANDLED FAILURE", traceback.format_exc(limit=6))
+        warn("DATA PREPARATION ERROR", traceback.format_exc(limit=6))
     report = pd.DataFrame(REPORT, columns=["section", "metric", "result"])
     save(report, "phase1_report.csv")
     (OUT / "phase1_report.txt").write_text(

@@ -1,6 +1,7 @@
 """Quantify drug-response heterogeneity within and between cancer lineages.
 
 Uses within-drug comparisons so fitted AUC values from different concentration ranges are not ranked as directly comparable potency measurements.
+Cancer-lineage summaries require sufficient observations within each drug-specific comparison.
 
 Run from the repository root with ``python 02_response_landscape.py``. Source files belong in
 ``Data`` beside this script and generated outputs are written to ``Results``.

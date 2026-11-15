@@ -1,6 +1,7 @@
 """Fit leakage-conscious RNA models for the selected drug panel.
 
 Feature selection is restricted to training data and performance is compared with matched mean and cancer-category baselines.
+The model-level split is fixed before drug-specific training tables are assembled.
 
 Run from the repository root with ``python 03_rna_models.py``. Source files belong in
 ``Data`` beside this script and generated outputs are written to ``Results``.

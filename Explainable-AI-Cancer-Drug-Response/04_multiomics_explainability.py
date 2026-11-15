@@ -1,6 +1,7 @@
 """Compare RNA and multi-omics prediction and calculate model explanations.
 
 SHAP values are treated as predictive attributions rather than evidence of causal molecular mechanisms.
+Modalities are compared on matched cell lines so coverage differences do not determine the benchmark.
 
 Run from the repository root with ``python 04_multiomics_explainability.py``. Source files belong in
 ``Data`` beside this script and generated outputs are written to ``Results``.
