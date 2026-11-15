@@ -3,6 +3,7 @@
 The script audits the supplied archives, checks barcode and metadata alignment,
 applies the established exclusions and writes analysis-ready sparse matrices.
 Place the three source archives in a ``Data`` directory beside this file.
+Raw count values are preserved during this preparation step.
 """
 
 from pathlib import Path

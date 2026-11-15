@@ -3,6 +3,7 @@
 The primary analysis uses the established log-z-score PCA representation and
 retains the alternative square-root-centred representation for sensitivity
 comparison. Cluster labels remain specimen-specific descriptive labels.
+The same random seeds are used for neighbour construction and embedding reproducibility.
 """
 
 from pathlib import Path

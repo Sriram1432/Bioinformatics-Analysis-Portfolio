@@ -3,6 +3,7 @@
 Marker rankings are descriptive within-specimen contrasts rather than formal
 differential-expression tests. Programme scores are interpreted as molecular
 signals in multicellular spots, not as direct cell-type assignments.
+Gene-set scores therefore describe local expression programmes rather than cellular purity.
 """
 
 from pathlib import Path

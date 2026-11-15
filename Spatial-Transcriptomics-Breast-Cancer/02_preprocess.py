@@ -3,6 +3,7 @@
 Calculations are performed independently within each specimen. The primary
 representation follows shared-gene CP10K normalisation, log1p transformation,
 variable-gene selection and deterministic PCA.
+Specimens are never pooled when estimating normalisation or variance parameters.
 """
 
 from pathlib import Path
