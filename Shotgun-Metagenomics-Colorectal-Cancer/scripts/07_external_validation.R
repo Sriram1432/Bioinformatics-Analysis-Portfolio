@@ -5,7 +5,8 @@ source(file.path(Sys.getenv("PROJECT4_ROOT", unset = getwd()), "scripts", "utils
 require_packages(c("data.table", "vegan", "permute", "brglm2", "metafor", "sandwich"))
 suppressPackageStartupMessages(library(data.table))
 
-# INDEPENDENT VALIDATION DATASET INSPECTION
+# External cohort data inspection
+# Taxa are matched by supported names; unmatched discovery features are not substituted.
 #
 # Source: Piccinno et al., 2025
 # DOI: 10.5281/zenodo.15069069

@@ -3,6 +3,7 @@
 # Figures are generated from local project data and saved analysis results.
 # Outputs: figures/reproduced/*.webp and figures/reproduced/figure_manifest.csv.
 # Source-project accession is used for provenance. Study-level independence is not presumed.
+# Figure panels are assembled from saved tables without refitting association models.
 
 options(stringsAsFactors = FALSE)
 ROOT <- normalizePath(Sys.getenv('PROJECT4_ROOT', unset = getwd()), winslash = '/', mustWork = TRUE)

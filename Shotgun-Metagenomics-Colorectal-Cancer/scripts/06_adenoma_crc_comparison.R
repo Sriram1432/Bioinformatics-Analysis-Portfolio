@@ -8,6 +8,7 @@ suppressPackageStartupMessages(library(data.table))
 # HEALTHY vs ADENOMA vs CRC
 #
 # Targeted analysis of previously identified CRC-associated MSPs
+# Group contrasts are cross-sectional and do not represent disease progression.
 #
 # Primary adjustment:
 #   Study + log10(mapped sequencing reads)

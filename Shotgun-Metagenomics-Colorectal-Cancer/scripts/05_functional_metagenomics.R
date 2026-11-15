@@ -8,6 +8,7 @@ suppressPackageStartupMessages(library(data.table))
 # CRC-ASSOCIATED MICROBIAL FUNCTIONAL MODULE DISCOVERY
 #
 # Functional potential, not measured metabolic activity.
+# Module-level associations are kept separate from taxonomic feature results.
 #
 # HC3 heteroskedasticity-robust regression
 # Study + age + sex + BMI + mapped sequencing reads
