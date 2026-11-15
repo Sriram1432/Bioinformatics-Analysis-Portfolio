@@ -4,6 +4,7 @@
 
 options(stringsAsFactors = FALSE)
 
+# Resolve the project directory for direct and pipeline execution.
 resolve_project_root <- function() {
     configured <- Sys.getenv("PROJECT1_ROOT", unset = "")
     if (nzchar(configured))
@@ -25,6 +26,7 @@ PROJECT_ROOT <- resolve_project_root()
 
 suppressPackageStartupMessages(library(data.table))
 
+# Check that a table contains the required columns.
 assert_columns <- function(x, required, label = deparse(substitute(x))) {
     absent <- setdiff(required, names(x))
     if (length(absent)) {
@@ -33,6 +35,7 @@ assert_columns <- function(x, required, label = deparse(substitute(x))) {
     invisible(TRUE)
 }
 
+# Write a result table to the project output directory.
 write_table <- function(x, name) {
     destination <- file.path(TABLE_DIR, name)
     dir.create(dirname(destination), recursive = TRUE, showWarnings = FALSE)
@@ -43,6 +46,7 @@ write_table <- function(x, name) {
     destination
 }
 
+# Read a project result table with optional column selection.
 read_table <- function(name, columns = NULL) {
     path <- file.path(TABLE_DIR, name)
     if (!file.exists(path))
@@ -160,6 +164,7 @@ fit_pseudobulk <- function(pb, contrasts, gene_symbols, gene_universe = NULL, ad
         prior.count = 2), design = design)
 }
 
+# Run Hallmark gene-set enrichment for the selected contrast.
 run_hallmark_gsea <- function(test, pathways, comparison) {
     tab <- test$table
     statistic <- sign(tab$logFC) * sqrt(pmax(tab$F, 0))
@@ -201,6 +206,7 @@ pairwise_quasibinomial <- function(x, success, total, group = "Disease", family_
     out[]
 }
 
+# Export a plot as a WebP file.
 save_webp <- function(plot, filename, width = 11, height = 7, quality = 94, dpi = 190) {
     destination <- file.path(FIGURE_DIR, filename)
     temporary_png <- tempfile(fileext = ".png")
@@ -215,6 +221,7 @@ save_webp <- function(plot, filename, width = 11, height = 7, quality = 94, dpi 
     destination
 }
 
+# Define the shared plotting theme.
 portfolio_theme <- function(base_size = 11) {
     ggplot2::theme_minimal(base_size = base_size) + ggplot2::theme(text = ggplot2::element_text(family = "sans",
         colour = "#111111"), plot.title = ggplot2::element_text(size = 16, face = "bold", colour = "#000000"),
@@ -243,12 +250,14 @@ FIGURE_DIR <- file.path(RUN_DIR, "figures")
 CACHE_DIR <- file.path(RUN_DIR, "checkpoints")
 for (p in c(RUN_DIR, TABLE_DIR, FIGURE_DIR, CACHE_DIR)) dir.create(p, recursive = TRUE, showWarnings = FALSE)
 
+# Load a saved checkpoint when it is available.
 load_checkpoint <- function(name) {
     path <- file.path(CACHE_DIR, paste0(name, ".rds"))
     if (!file.exists(path))
         stop("Missing upstream checkpoint: ", path)
     readRDS(path)
 }
+# Save selected objects for the next analysis step.
 store_checkpoint <- function(name, values) {
     path <- file.path(CACHE_DIR, paste0(name, ".rds"))
     temp <- tempfile(tmpdir = CACHE_DIR, fileext = ".rds")
@@ -258,6 +267,7 @@ store_checkpoint <- function(name, values) {
         stop("Cannot save checkpoint: ", path)
     invisible(path)
 }
+# Restore saved checkpoint objects to the current environment.
 restore <- function(x) list2env(x, envir = .GlobalEnv)
 
 # ----------------------------------------------------------------------------- Analysis
@@ -367,6 +377,7 @@ write_table(core_marker_models, "macrophage/core_marker_quasibinomial.csv")
 marker_panel <- c("SFTPC", "SFTPA1", "AGER", "PDPN", "KRT5", "KRT17", "KRT8", "COL1A1", "DCN", "ACTA2",
     "PECAM1", "VWF", "C1QA", "MARCO", "LYZ", "CD3D", "MS4A1", "MKI67", "TOP2A", "PPBP", "PF4", "MMP7",
     "KRT19", "IGHM", "CCNA2")
+# Summarise marker support across the requested cell population.
 marker_summary <- function(indices, groups, group_name) {
     gene_rows <- which(genes$gene_symbol %in% marker_panel)
     out <- rbindlist(lapply(unique(as.character(groups)), function(group_value) {
