@@ -1,5 +1,6 @@
 # Validate GEO GSE136831 inputs, harmonise identifiers and prepare the analysis objects.
 # Clinical samples are the replication unit for inference.
+# Source-provided cell annotations are retained; this step does not relabel cell types.
 
 options(stringsAsFactors = FALSE)
 

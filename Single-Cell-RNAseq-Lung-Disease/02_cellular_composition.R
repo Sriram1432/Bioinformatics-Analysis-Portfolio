@@ -1,5 +1,6 @@
 # Build the GSE136831 lung cell atlas and test sample-level recovered-cell composition.
 # Clinical samples are the replication unit for inference.
+# Recovered cell fractions reflect this dataset and are not estimates of absolute tissue abundance.
 
 options(stringsAsFactors = FALSE)
 

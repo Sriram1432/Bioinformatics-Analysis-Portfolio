@@ -1,5 +1,6 @@
 # Test Hallmark enrichment using signed differential-expression statistics from GSE136831.
 # Clinical samples are the replication unit for inference.
+# Enrichment is directional and uses the complete ranked test statistics rather than a hit list.
 
 options(stringsAsFactors = FALSE)
 

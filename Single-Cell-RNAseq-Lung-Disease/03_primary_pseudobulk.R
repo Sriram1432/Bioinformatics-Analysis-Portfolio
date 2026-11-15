@@ -1,5 +1,6 @@
 # Fit sample-level fibroblast, ATII and macrophage pseudobulk models for GSE136831.
 # Clinical samples are the replication unit for inference.
+# Counts are aggregated within sample and cell class before disease contrasts are fitted.
 
 options(stringsAsFactors = FALSE)
 
