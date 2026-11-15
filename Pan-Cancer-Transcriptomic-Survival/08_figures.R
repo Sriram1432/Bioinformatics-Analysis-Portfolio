@@ -5,6 +5,7 @@
 
 options(stringsAsFactors = FALSE)
 
+# Resolve the project directory for direct and pipeline execution.
 resolve_project_root <- function() {
     configured <- Sys.getenv("PROJECT3_ROOT", unset = "")
     if (nzchar(configured))
@@ -40,13 +41,16 @@ favourable <- "#2B6F9F"
 ink <- "#20242A"
 muted <- "#66717F"
 pale <- "#E7EBEF"
+# Require the requested analysis file.
 req <- function(path) {
     if (!file.exists(path))
         stop("Missing required input: ", path)
     path
 }
+# Read and standardise tumour-stage annotations.
 read_stage <- function(stage, file) fread(req(file.path(root, "Results_Rebuild", stage, file)))
 
+# Define the common visual style for atlas figures.
 theme_atlas <- function(size = 10) {
     ggplot2::theme_classic(base_size = size, base_family = "sans") + ggplot2::theme(axis.text = ggplot2::element_text(colour = ink),
         axis.title = ggplot2::element_text(colour = ink), strip.background = ggplot2::element_rect(fill = "#F2F4F6",
@@ -58,6 +62,7 @@ theme_atlas <- function(size = 10) {
 manifest <- list()
 validation <- character()
 km_audit <- list()
+# Export a figure with consistent settings.
 export_plot <- function(p, number, stem, width, height, source, method, denominator, limitations = "None identified") {
     base <- sprintf("Figure%02d_%s", number, stem)
     webp <- file.path(figdir, paste0(base, ".webp"))
@@ -158,6 +163,7 @@ g4_summary[, Eligible := Stage05_tested == length(cancers) & Stage05_FDR_lt_0_05
 forced4 <- c("SERPINE1", "MET", "STX1A", "PGK1", "DKK1", "ATP6V1B1")
 if (!all(forced4 %in% g4_summary[Eligible == TRUE]$Feature_ID)) stop("Figure 04: one or more required project candidates fail the documented availability/support gates")
 selected4 <- character()
+# Add a four-panel annotation to the current figure.
 add4 <- function(pool, n) {
     pool <- setdiff(pool, selected4)
     selected4 <<- c(selected4, head(pool, n))
@@ -344,6 +350,7 @@ make_km <- function(cc, gene, number, adjusted_row, selection_note) {
         group_wide)
 }
 
+# Retrieve adj.
 get_adj <- function(cc, gene) s07[Cancer == cc & Feature_ID == gene][1]
 make_km("PAAD", "MET", 8, get_adj("PAAD", "MET"), "Post-discovery visualisation; not independent validation.")
 
@@ -374,6 +381,7 @@ clean_chr <- function(x) {
         "[NOT EVALUATED]", "[DISCREPANCY]")] <- NA_character_
     z
 }
+# Collapse detailed tumour stage labels into analysis groups.
 major_stage <- function(x) {
     z <- toupper(clean_chr(x))
     z <- gsub("^STAGE[[:space:]]*", "", z)

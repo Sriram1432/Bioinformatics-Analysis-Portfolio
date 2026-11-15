@@ -6,6 +6,7 @@
 
 options(stringsAsFactors = FALSE)
 
+# Resolve the project directory for direct and pipeline execution.
 resolve_project_root <- function() {
     configured <- Sys.getenv("PROJECT3_ROOT", unset = "")
     if (nzchar(configured))
@@ -84,6 +85,7 @@ clean_chr <- function(x) {
         "[NOT EVALUATED]", "[DISCREPANCY]")] <- NA_character_
     z
 }
+# Collapse detailed tumour stage labels into analysis groups.
 major_stage <- function(x) {
     z <- toupper(clean_chr(x))
     z <- gsub("^STAGE[[:space:]]*", "", z)
@@ -94,6 +96,7 @@ major_stage <- function(x) {
     out[grepl("^I($|A|B|C|[[:space:]])", z) & is.na(out)] <- "I"
     out
 }
+# Prepare matched clinical covariates for one cancer cohort.
 prepare_clinical <- function(cl, cc) {
     n <- nrow(cl)
     d <- data.frame(time = as.numeric(cl$OS_time), event = as.integer(cl$OS))
@@ -285,10 +288,12 @@ top_meta <- meta[seq_len(min(20L, .N)), .(Feature_ID, K, HR, CI_low, CI_high, P,
 # descriptive: selected using the same survival outcomes.
 black <- "#171717"
 muted <- "#5A6573"
+# Define the shared plotting theme.
 base_theme <- function(size = 13) ggplot2::theme_minimal(base_size = size, base_family = "sans") + ggplot2::theme(plot.title = ggplot2::element_text(face = "bold",
     colour = black, size = 16), axis.title = ggplot2::element_text(face = "bold", colour = black), axis.text = ggplot2::element_text(colour = black),
     legend.title = ggplot2::element_text(face = "bold", colour = black), panel.grid.minor = ggplot2::element_blank(),
     plot.margin = ggplot2::margin(15, 22, 15, 15))
+# Export a figure with consistent settings.
 export_plot <- function(p, file, width = 12, height = 8) {
     ggplot2::ggsave(file, p, device = ragg::agg_webp, width = width, height = height, units = "in", dpi = 300,
         bg = "white")
@@ -417,6 +422,7 @@ for (pkg in c("data.table", "survival", "ggplot2", "ragg")) {
 }
 suppressPackageStartupMessages(library(data.table))
 cancers <- c("BRCA", "COAD", "GBM", "HNSC", "KIRC", "LUAD", "LUSC", "OV", "PAAD", "UCEC")
+# Require an analysis input before continuing.
 reqfile <- function(p) {
     if (!file.exists(p))
         stop("Required input missing: ", p)
@@ -435,12 +441,14 @@ selection <- data.table(Feature_ID = features, Selection = ifelse(features %in% 
     "Top_adjusted_meta_exploratory"))
 fwrite(selection, file.path(out, "Stage08_selected_features.csv"))
 
+# Standardise missing values in clinical text fields.
 clean_chr <- function(x) {
     z <- trimws(as.character(x))
     z[toupper(z) %in% c("", "NA", "N/A", "NULL", "NOT REPORTED", "NOT AVAILABLE", "UNKNOWN", "[NOT AVAILABLE]",
         "[NOT EVALUATED]", "[DISCREPANCY]")] <- NA_character_
     z
 }
+# Collapse detailed tumour stage labels into analysis groups.
 major_stage <- function(x) {
     z <- toupper(clean_chr(x))
     z <- gsub("^STAGE[[:space:]]*", "", z)
@@ -451,6 +459,7 @@ major_stage <- function(x) {
     y[grepl("^I($|A|B|C|[[:space:]])", z) & is.na(y)] <- "I"
     y
 }
+# Prepare matched clinical covariates for one cancer cohort.
 prepare_clinical <- function(cl, cc) {
     n <- nrow(cl)
     d <- data.frame(time = as.numeric(cl$OS_time), event = as.integer(cl$OS))
@@ -617,11 +626,13 @@ summary_cancer <- res[, .(Models = .N, Gene_PH_P_005 = sum(Gene_PH_P < 0.05, na.
 
 # ----- Figure atlas: single-panel, publication-oriented diagnostics. -----
 ink <- "#17191E"
+# Define the shared plotting theme.
 base_theme <- function() ggplot2::theme_minimal(base_size = 13) + ggplot2::theme(plot.title = ggplot2::element_text(face = "bold",
     colour = ink, size = 17), plot.subtitle = ggplot2::element_text(colour = "#4C5663", size = 11), axis.title = ggplot2::element_text(face = "bold",
     colour = ink), axis.text = ggplot2::element_text(colour = ink), legend.title = ggplot2::element_text(face = "bold",
     colour = ink), panel.grid.minor = ggplot2::element_blank(), plot.margin = ggplot2::margin(16, 24,
     16, 16))
+# Export the current figure with consistent settings.
 export <- function(p, name, w = 12, h = 8) {
     target <- file.path(figdir, name)
     ggplot2::ggsave(target, p, device = ragg::agg_webp, width = w, height = h, units = "in", dpi = 300,
@@ -748,6 +759,7 @@ dir.create(figdir, recursive = TRUE, showWarnings = FALSE)
 for (pkg in c("data.table", "survival", "ggplot2", "ragg")) if (!requireNamespace(pkg, quietly = TRUE)) stop("Missing package: ",
     pkg)
 suppressPackageStartupMessages(library(data.table))
+# Require an analysis input before continuing.
 checkfile <- function(x) {
     if (!file.exists(x))
         stop("Missing required file: ", x)
@@ -756,12 +768,14 @@ checkfile <- function(x) {
 prior <- fread(checkfile(file.path(in08, "Stage08_all_candidate_diagnostics.csv")))
 stopifnot(all(c("Cancer", "Feature_ID", "Adjusted_HR", "Sensitivity_HR", "Excluded_in_sensitivity") %in%
     names(prior)))
+# Standardise missing values in clinical text fields.
 clean_chr <- function(x) {
     z <- trimws(as.character(x))
     z[toupper(z) %in% c("", "NA", "N/A", "NULL", "NOT REPORTED", "NOT AVAILABLE", "UNKNOWN", "[NOT AVAILABLE]",
         "[NOT EVALUATED]", "[DISCREPANCY]")] <- NA_character_
     z
 }
+# Collapse detailed tumour stage labels into analysis groups.
 major_stage <- function(x) {
     z <- toupper(clean_chr(x))
     z <- gsub("^STAGE[[:space:]]*", "", z)
@@ -772,6 +786,7 @@ major_stage <- function(x) {
     y[grepl("^I($|A|B|C|[[:space:]])", z) & is.na(y)] <- "I"
     y
 }
+# Prepare matched clinical covariates for one cancer cohort.
 prepare_clinical <- function(cl, cc) {
     n <- nrow(cl)
     d <- data.frame(time = as.numeric(cl$OS_time), event = as.integer(cl$OS))

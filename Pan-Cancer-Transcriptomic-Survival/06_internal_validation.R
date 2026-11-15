@@ -5,6 +5,7 @@
 
 options(stringsAsFactors = FALSE)
 
+# Resolve the project directory for direct and pipeline execution.
 resolve_project_root <- function() {
     configured <- Sys.getenv("PROJECT3_ROOT", unset = "")
     if (nzchar(configured))
@@ -38,17 +39,20 @@ cancers <- c("BRCA", "COAD", "GBM", "HNSC", "KIRC", "LUAD", "LUSC", "OV", "PAAD"
 genes <- c("SERPINE1", "FLNC", "STX1A", "PSMD2", "EXPH5", "PLK1", "MET", "PGK1", "DKK1")
 K <- 5L
 R <- 2L
+# Require the requested analysis file.
 required <- function(f) {
     if (!file.exists(f))
         stop("Required analysis file missing: ", f)
     f
 }
+# Standardise missing values in clinical text fields.
 clean_chr <- function(x) {
     z <- trimws(as.character(x))
     z[toupper(z) %in% c("", "NA", "N/A", "NULL", "NOT REPORTED", "NOT AVAILABLE", "UNKNOWN", "[NOT AVAILABLE]",
         "[NOT EVALUATED]", "[DISCREPANCY]")] <- NA_character_
     z
 }
+# Collapse detailed tumour stage labels into analysis groups.
 major_stage <- function(x) {
     z <- toupper(clean_chr(x))
     z <- gsub("^STAGE[[:space:]]*", "", z)
@@ -259,6 +263,7 @@ theme_science <- function() ggplot2::theme_minimal(base_size = 16) + ggplot2::th
     axis.title = ggplot2::element_text(face = "bold", colour = "black"), axis.text = ggplot2::element_text(colour = "black"),
     panel.grid.minor = ggplot2::element_blank(), legend.title = ggplot2::element_text(face = "bold"))
 figure_paths <- character()
+# Save the current plot using the project output settings.
 save_plot <- function(p, name, width = 13, height = 8) {
     path <- file.path(figdir, name)
     ggplot2::ggsave(path, plot = p, device = ragg::agg_webp, width = width, height = height, units = "in",
@@ -372,6 +377,7 @@ clean <- function(x) {
     z[z %in% c("", "NA", "N/A", "NULL", "UNKNOWN", "NOT AVAILABLE", "[NOT AVAILABLE]", "[NOT EVALUATED]")] <- NA_character_
     z
 }
+# Convert tumour-stage groups to an ordered numeric scale.
 stage_numeric <- function(x) {
     z <- gsub("^STAGE[[:space:]]*", "", clean(x))
     v <- rep(NA_real_, length(z))
@@ -381,6 +387,7 @@ stage_numeric <- function(x) {
     v[is.na(v) & grepl("^I($|A|B|C|[[:space:]])", z)] <- 1
     v
 }
+# Assemble the clinical covariates used by the survival model.
 make_clinical <- function(cl, cc) {
     d <- data.frame(time = as.numeric(as.character(cl$OS_time)), event = as.integer(as.character(cl$OS)))
     a <- suppressWarnings(as.numeric(as.character(cl$age_at_initial_pathologic_diagnosis)))
@@ -409,6 +416,7 @@ make_clinical <- function(cl, cc) {
     }
     d
 }
+# Retrieve fit.
 get_fit <- function(form, data) {
     w <- character()
     fit <- withCallingHandlers(tryCatch(survival::coxph(form, data = data, ties = "efron", control = survival::coxph.control(iter.max = 60),
@@ -425,6 +433,7 @@ get_fit <- function(form, data) {
     sep <- any(grepl("infinite|did not converge|singular|ran out of iterations", w, ignore.case = TRUE))
     list(fit = if (ok && !sep) fit else NULL, warning = paste(unique(w), collapse = " | "), reason = if (!ok) "Invalid/singular coefficient or variance" else if (sep) "Suspected separation/nonconvergence" else "")
 }
+# Calculate concordance for a fitted survival model.
 concord <- function(fit, test) {
     if (is.null(fit))
         return(NA_real_)
@@ -585,10 +594,12 @@ if (nrow(issues)) fwrite(issues, file.path(out, "Stage09B_fit_warnings.csv"))
 # Results with failed folds are reported WITH their original expected denominator.
 fail <- all[Status != "ok", .(Failures = .N), by = .(Cancer, Analysis, Status)]
 fwrite(fail, file.path(out, "Stage09B_failure_details.csv"))
+# Define the publication plotting theme.
 theme_pub <- function() ggplot2::theme_minimal(base_size = 16) + ggplot2::theme(plot.title = ggplot2::element_text(face = "bold",
     size = 19, colour = "black"), axis.title = ggplot2::element_text(face = "bold", colour = "black"),
     axis.text = ggplot2::element_text(colour = "black"), panel.grid.minor = ggplot2::element_blank())
 figures <- character()
+# Export the current plot with consistent dimensions.
 savefig <- function(p, n, w = 13, h = 8) {
     f <- file.path(figdir, n)
     ggplot2::ggsave(f, plot = p, device = ragg::agg_webp, width = w, height = h, units = "in", res = 300,
@@ -680,11 +691,13 @@ repeats <- 2L
 N_SCREEN <- 150L
 for (f in c("Stage09B_all_validation_attempts.csv", "Stage09B_validation_summary.csv")) if (!file.exists(file.path(previous,
     f))) stop("Missing Stage09B output: ", f)
+# Clean labels before tables or figures are assembled.
 clean <- function(x) {
     z <- toupper(trimws(as.character(x)))
     z[z %in% c("", "NA", "N/A", "NULL", "UNKNOWN", "NOT AVAILABLE", "[NOT AVAILABLE]", "[NOT EVALUATED]")] <- NA_character_
     z
 }
+# Convert tumour-stage groups to an ordered numeric scale.
 stage_numeric <- function(x) {
     z <- gsub("^STAGE[[:space:]]*", "", clean(x))
     v <- rep(NA_real_, length(z))
@@ -694,6 +707,7 @@ stage_numeric <- function(x) {
     v[is.na(v) & grepl("^I($|A|B|C|[[:space:]])", z)] <- 1
     v
 }
+# Assemble the clinical covariates used by the survival model.
 make_clinical <- function(cl, cc) {
     d <- data.frame(time = as.numeric(as.character(cl$OS_time)), event = as.integer(as.character(cl$OS)))
     a <- suppressWarnings(as.numeric(as.character(cl$age_at_initial_pathologic_diagnosis)))
@@ -722,6 +736,7 @@ make_clinical <- function(cl, cc) {
     }
     d
 }
+# Retrieve fit.
 get_fit <- function(form, data) {
     w <- character()
     fit <- withCallingHandlers(tryCatch(survival::coxph(form, data = data, ties = "efron", control = survival::coxph.control(iter.max = 60),
@@ -738,6 +753,7 @@ get_fit <- function(form, data) {
     sep <- any(grepl("infinite|did not converge|singular|ran out of iterations", w, ignore.case = TRUE))
     list(fit = if (ok && !sep) fit else NULL, warning = paste(unique(w), collapse = " | "), reason = if (!ok) "Invalid/singular coefficient or variance" else if (sep) "Suspected separation/nonconvergence" else "")
 }
+# Calculate concordance for a fitted survival model.
 concord <- function(fit, test) {
     if (is.null(fit))
         return(NA_real_)
@@ -969,6 +985,7 @@ algorithm <- merge(algorithm, original_summary, by = "Cancer", all.x = TRUE)
 setorder(algorithm, -Mean_Delta_C)
 fwrite(algorithm, file.path(out, "Stage09C_training_selected_algorithm_per_cancer.csv"))
 
+# Define the plotting theme used for publication figures.
 pub <- function() ggplot2::theme_minimal(base_size = 16) + ggplot2::theme(plot.title = ggplot2::element_text(face = "bold",
     colour = "black", size = 19), axis.title = ggplot2::element_text(face = "bold", colour = "black"),
     axis.text = ggplot2::element_text(face = "bold", colour = "black"), panel.grid.minor = ggplot2::element_blank())

@@ -5,6 +5,7 @@
 
 options(stringsAsFactors = FALSE)
 
+# Resolve the project directory for direct and pipeline execution.
 resolve_project_root <- function() {
     configured <- Sys.getenv("PROJECT3_ROOT", unset = "")
     if (nzchar(configured))
@@ -140,6 +141,7 @@ fwrite(sensitivity, file.path(out_dir, "Stage11A_threshold_sensitivity.csv"))
 
 message("Stage11A 4/5: Standalone scientific figures")
 figures <- character()
+# Save the current plot using the project output settings.
 save_plot <- function(g, name, width = 12, height = 8) {
     f <- file.path(fig_dir, name)
     ragg::agg_webp(filename = f, width = width, height = height, units = "in", res = 300, quality = 95)
@@ -185,6 +187,7 @@ setorder(key_pathways, FDR)
 fwrite(key_pathways, file.path(out_dir, "Stage11A_key_gene_containing_pathways.csv"))
 manifest <- data.table(Figure_file = figures)
 fwrite(manifest, file.path(out_dir, "Stage11A_figures.csv"))
+# Format values for concise audit output.
 fmt <- function(dt, n = 15) if (nrow(dt)) capture.output(print(dt[seq_len(min(n, .N))])) else "No rows."
 report <- c("===============================================================", "PROJECT 3 | STAGE 11A \342\200\224 SURVIVAL-ASSOCIATED PATHWAY ENRICHMENT",
     "===============================================================", "1. COHORT DISCOVERY SUMMARIES",
@@ -340,6 +343,7 @@ fwrite(counts, file.path(output, "Stage11B_pathway_yield_by_cancer.csv"))
 
 message("11B 4/5 \342\200\224 Publication-oriented standalone figures")
 figures <- character()
+# Export a plot as a WebP file.
 save_webp <- function(plot, filename, w = 13, h = 8) {
     path <- file.path(figure_dir, filename)
     ragg::agg_webp(filename = path, width = w, height = h, units = "in", res = 300, quality = 95)
@@ -394,6 +398,7 @@ if (nrow(react)) {
 fwrite(data.table(Figure = figures), file.path(output, "Stage11B_figure_manifest.csv"))
 
 message("11B 5/5 \342\200\224 Consolidated scientific checkpoint (all report output at end)")
+# Format values for concise audit output.
 fmt <- function(z, n = 25L) if (nrow(z)) capture.output(print(head(z, n))) else "None"
 top <- sig[order(FDR, -abs(NES)), .(Cancer, Library, Direction, Pathway, NES, FDR, Set_size)][1:min(25,
     .N)]
