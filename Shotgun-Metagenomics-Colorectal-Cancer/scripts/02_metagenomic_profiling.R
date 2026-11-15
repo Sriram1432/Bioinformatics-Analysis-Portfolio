@@ -6,8 +6,7 @@ require_packages(c("data.table"))
 suppressPackageStartupMessages(library(data.table))
 
 # Microbial community landscape
-
-library(data.table)
+# Profile summaries are descriptive and retain source-project labels for downstream adjustment.
 
 
 project_dir <- project_root()

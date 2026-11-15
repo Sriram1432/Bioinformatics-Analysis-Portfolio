@@ -6,6 +6,7 @@ require_packages(c("data.table", "readxl"))
 suppressPackageStartupMessages(library(data.table))
 
 # Clinical sample eligibility and study population
+# Sample identifiers are checked after metadata harmonisation to prevent duplicate profiles.
 suppressPackageStartupMessages(library(readxl))
 
 project_dir <- project_root()

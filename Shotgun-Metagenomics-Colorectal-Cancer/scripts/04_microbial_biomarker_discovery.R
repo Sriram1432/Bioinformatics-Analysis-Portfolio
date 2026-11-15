@@ -6,8 +6,7 @@ require_packages(c("data.table", "metafor", "sandwich"))
 suppressPackageStartupMessages(library(data.table))
 
 # Discovery of CRC-associated microbial species
-
-library(data.table)
+# CLR coefficients describe relative community representation, not absolute microbial load.
 
 
 project_dir <- project_root()

@@ -6,6 +6,7 @@ require_packages(c("data.table", "metafor", "vegan", "permute", "sandwich", "lmt
 suppressPackageStartupMessages(library(data.table))
 
 # Alpha diversity and preliminary cohort-adjusted associations
+# Diversity is calculated per stool sample; source projects remain the inferential strata.
 
 suppressPackageStartupMessages({
   library(sandwich)
