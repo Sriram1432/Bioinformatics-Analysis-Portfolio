@@ -1,6 +1,7 @@
 """Regenerate the fifteen-figure cancer pharmacogenomics atlas.
 
 Reads saved result tables and writes WebP and SVG figures with their interpretation notes.
+Plot generation does not retrain models or recalculate held-out predictions.
 
 Run from the repository root with ``python 08_figures.py``. Source files belong in
 ``Data`` beside this script and generated outputs are written to ``Results``.

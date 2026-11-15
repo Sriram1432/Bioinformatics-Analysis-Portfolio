@@ -1,6 +1,7 @@
 """Audit GDSC2 and PRISM concordance and evaluate SLFN11 associations.
 
 Compound matches remain assay-aware and adjusted rank analyses account for cancer lineage and RNA source where supported.
+Cross-platform agreement is assessed separately from within-platform predictive performance.
 
 Run from the repository root with ``python 05_cross_platform_validation.py``. Source files belong in
 ``Data`` beside this script and generated outputs are written to ``Results``.

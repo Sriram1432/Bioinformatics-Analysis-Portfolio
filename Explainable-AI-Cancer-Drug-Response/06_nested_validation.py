@@ -1,6 +1,7 @@
 """Evaluate modality performance with fold-specific feature selection.
 
 Imputation, scaling and selection are learned inside each training fold, with identical held-out observations used for modality comparisons.
+Repeated folds estimate stability within the development cohort and are not external validation.
 
 Run from the repository root with ``python 06_nested_validation.py``. Source files belong in
 ``Data`` beside this script and generated outputs are written to ``Results``.

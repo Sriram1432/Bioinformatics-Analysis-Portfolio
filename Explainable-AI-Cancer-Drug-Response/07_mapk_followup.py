@@ -1,6 +1,7 @@
 """Investigate cancer-specific MAPK response patterns and predictive follow-up.
 
 Combines relative response screens, a STRING-informed negative-control analysis and the selected six-gene feedback signature without claiming pathway activation.
+Network features are evaluated as predictive context rather than evidence of physical interaction in these cell lines.
 
 Run from the repository root with ``python 07_mapk_followup.py``. Source files belong in
 ``Data`` beside this script and generated outputs are written to ``Results``.
