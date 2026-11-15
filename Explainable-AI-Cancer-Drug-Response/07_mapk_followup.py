@@ -47,10 +47,12 @@ GROUPS = {
 }
 
 
+# Write a progress message to the console.
 def say(tag, msg):
     REP.append(f"[{tag}] {msg}")
 
 
+# Match file.
 def match_file(prefix):
     fs = list(DATA.glob(prefix + "*"))
     if len(fs) != 1:
@@ -60,12 +62,14 @@ def match_file(prefix):
     return fs[0]
 
 
+# Normalise text for reliable identifier matching.
 def norm(s):
     return (
         s.astype("string").str.strip().str.upper().str.replace(r"\.0$", "", regex=True)
     )
 
 
+# Find the first column matching the requested aliases.
 def col(df, names, need=True):
     cols = {re.sub("[^a-z0-9]", "", str(c).lower()): c for c in df.columns}
     for n in names:
@@ -77,12 +81,14 @@ def col(df, names, need=True):
     return None
 
 
+# Write a named result table and audit message.
 def report(df, columns, n=15):
     if df.empty:
         return "No qualifying records"
     return df[columns].head(n).to_string(index=False, float_format=lambda x: f"{x:.5g}")
 
 
+# Apply multiple-testing correction within the stated family.
 def correction(df, p_col="p", q_col="q_fdr"):
     df[q_col] = np.nan
     valid = df[p_col].notna()
@@ -91,6 +97,7 @@ def correction(df, p_col="p", q_col="q_fdr"):
     return df
 
 
+# Run this analysis block and write its outputs.
 def main():
     say(
         "DESIGN",
@@ -593,16 +600,19 @@ LOG = []
 START = time.time()
 
 
+# Write a progress message to the console.
 def say(k, v):
     LOG.append(f"[{k}] {v}")
 
 
+# Normalise text for reliable identifier matching.
 def norm(s):
     return (
         s.astype("string").str.strip().str.upper().str.replace(r"\.0$", "", regex=True)
     )
 
 
+# Retrieve the requested external resource with local caching.
 def fetch(filename, category):
     dst = PPI / filename
     if dst.exists() and dst.stat().st_size > 1000:
@@ -620,6 +630,7 @@ def fetch(filename, category):
     return dst
 
 
+# Load shared helper functions from the earlier module.
 def helpers():
     fn = ROOT / "06_nested_validation.py"
     if not fn.exists():
@@ -630,6 +641,7 @@ def helpers():
     return m
 
 
+# Load ppi.
 def load_ppi():
     info = fetch(FILE_INFO, "protein.info.v12.5")
     links = fetch(FILE_LINKS, "protein.physical.links.v12.5")
@@ -690,6 +702,7 @@ def load_ppi():
     return edge
 
 
+# Construct network-derived features for matched models.
 def network_matrix(columns, edge, seed=None):
     # Edges restricted to measured fold-selected predictors; no target-based edge selection.
     columns = list(columns)
@@ -712,6 +725,7 @@ def network_matrix(columns, edge, seed=None):
     return W, int((degree > 0).sum()), len(e)
 
 
+# Fit one predictive model on the current training fold.
 def model(seed):
     return XGBRegressor(
         n_estimators=240,
@@ -729,6 +743,7 @@ def model(seed):
     )
 
 
+# Run this analysis block and write its outputs.
 def main():
     say(
         "DESIGN",
@@ -1103,16 +1118,19 @@ MUT_GENES = ["KRAS", "NRAS", "BRAF", "NF1", "TP53", "PIK3CA", "APC", "SMAD4"]
 MIN_N = 12
 
 
+# Write a progress message to the console.
 def say(tag, v):
     LOG.append(f"[{tag}] {v}")
 
 
+# Normalise text for reliable identifier matching.
 def norm(s):
     return (
         s.astype("string").str.strip().str.upper().str.replace(r"\.0$", "", regex=True)
     )
 
 
+# Locate a required input file.
 def file(prefix):
     a = list(DATA.glob(prefix + "*"))
     if len(a) != 1:
@@ -1122,6 +1140,7 @@ def file(prefix):
     return a[0]
 
 
+# Summarise the response distribution for a model subset.
 def disp(df, n=16):
     return (
         "No eligible results"
@@ -1130,6 +1149,7 @@ def disp(df, n=16):
     )
 
 
+# Return the helper object used by this analysis block.
 def helper():
     p = ROOT / "04_multiomics_explainability.py"
     if not p.exists():
@@ -1142,6 +1162,7 @@ def helper():
     return m
 
 
+# Read rna.
 def read_rna(models):
     path = file("rnaseq_merged_")
     with zipfile.ZipFile(path) as z:
@@ -1188,6 +1209,7 @@ def read_rna(models):
     return rna
 
 
+# Fit the adjusted molecular association model.
 def stats_assoc(df, drug, cancer, modality, feature, typ):
     d = df[["AUC", feature]].dropna()
     n = len(d)
@@ -1229,6 +1251,7 @@ def stats_assoc(df, drug, cancer, modality, feature, typ):
         )
 
 
+# Fit the lineage-adjusted rank association.
 def rank_adjusted(df, feature):
     # Joint colorectal/pancreatic descriptive regression: conditional association, HC3 robust SE.
     d = (
@@ -1268,6 +1291,7 @@ def rank_adjusted(df, feature):
     )
 
 
+# Run this analysis block and write its outputs.
 def main():
     say(
         "DESIGN",
@@ -1577,10 +1601,12 @@ LOG = []
 T0 = time.time()
 
 
+# Write a progress message to the console.
 def say(k, x):
     LOG.append(f"[{k}] {x}")
 
 
+# Print a compact table for review.
 def show(df, n=30):
     return (
         "No eligible results"
@@ -1589,12 +1615,14 @@ def show(df, n=30):
     )
 
 
+# Return a normalised numeric vector.
 def normal(s):
     return (
         s.astype("string").str.strip().str.upper().str.replace(r"\.0$", "", regex=True)
     )
 
 
+# Fit and evaluate the signature model for one fold.
 def signature_fold(train, val):
     # Each gene normalised using training data, score is mean z-value over >=4 genes.
     a = train[SIG].apply(pd.to_numeric, errors="coerce").to_numpy(dtype=float)
@@ -1605,6 +1633,7 @@ def signature_fold(train, val):
     if valid.sum() < 4:
         raise ValueError("Fewer than 4 variable feedback genes in training fold")
 
+    # Calculate the six-gene signature score.
     def score(x):
         z = (x[:, valid] - means[valid]) / sds[valid]
         num = np.isfinite(z).sum(axis=1)
@@ -1613,6 +1642,7 @@ def signature_fold(train, val):
     return score(a), score(b), int(valid.sum())
 
 
+# Assemble matched feature matrices for model fitting.
 def matrices(tr, va, with_mut, with_sig, st, sv):
     # Same nuisance covariates for ALL models; cancer-aware reference is not train mean.
     def base(d):
@@ -1645,6 +1675,7 @@ def matrices(tr, va, with_mut, with_sig, st, sv):
     return x, y
 
 
+# Run one repeated model evaluation.
 def run():
     say(
         "DESIGN",

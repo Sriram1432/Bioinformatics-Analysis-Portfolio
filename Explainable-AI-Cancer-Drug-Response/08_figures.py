@@ -99,10 +99,12 @@ plt.rcParams.update(
 captions: list[dict[str, str]] = []
 
 
+# Read the required saved result table.
 def read(rel: str, **kwargs) -> pd.DataFrame:
     return pd.read_csv(RESULTS / rel, **kwargs)
 
 
+# Clean labels before tables or figures are assembled.
 def clean(ax: plt.Axes, grid: str | None = None) -> None:
     ax.spines[["top", "right"]].set_visible(False)
     if grid:
@@ -111,11 +113,13 @@ def clean(ax: plt.Axes, grid: str | None = None) -> None:
         ax.grid(False)
 
 
+# Read column names without loading the full table.
 def header(ax: plt.Axes, title: str, subtitle: str) -> None:
     # Keep exported figures visually clean; methodological detail belongs in the caption file.
     ax.set_title(title, loc="left", color=INK, pad=18)
 
 
+# Write a result table to the current output directory.
 def save(fig: plt.Figure, stem: str, title: str, caption: str, sources: str) -> None:
     fig.savefig(OUT / f"{stem}.webp", dpi=300, bbox_inches="tight", pad_inches=0.25)
     fig.savefig(OUT / f"{stem}.svg", bbox_inches="tight", pad_inches=0.25)
@@ -125,6 +129,7 @@ def save(fig: plt.Figure, stem: str, title: str, caption: str, sources: str) -> 
     )
 
 
+# Build the F01 COVERAGE panel.
 def f01_coverage() -> None:
     d = read("Phase1/gdsc_multiomics_coverage.csv")
     cols = ["RNA", "PROTEOMICS", "CNV", "MUTATION_RECORD"]
@@ -232,6 +237,7 @@ def f01_coverage() -> None:
     )
 
 
+# Build the F02 HETEROGENEITY panel.
 def f02_heterogeneity() -> None:
     d = read("Phase2C/drug_between_cancer_kruskal_fdr.csv")
     for c in ["epsilon2", "q_fdr", "n_tested", "n_cancers"]:
@@ -277,6 +283,7 @@ def f02_heterogeneity() -> None:
     )
 
 
+# Build the F03 ENRICHMENT panel.
 def f03_enrichment() -> None:
     d = read("Phase6A/focus_lower_auc_enrichment.csv", dtype={"drug_id": str})
     for c in ["rank_effect", "q_fdr", "n_cancer"]:
@@ -357,6 +364,7 @@ def f03_enrichment() -> None:
     )
 
 
+# Build the F04 WITHIN VARIABILITY panel.
 def f04_within_variability() -> None:
     d = read("Phase2C/within_cancer_response_variability.csv")
     for c in ["n", "iqr_auc", "median_auc"]:
@@ -410,6 +418,7 @@ def f04_within_variability() -> None:
     )
 
 
+# Build the F05 PHASE2 PREDICTION panel.
 def f05_phase2_prediction() -> None:
     d = read("Phase2/selected_model_vs_baseline.csv")
     for c in ["MAE", "baseline_MAE", "MAE_improvement", "R2", "Spearman"]:
@@ -457,6 +466,7 @@ def f05_phase2_prediction() -> None:
     )
 
 
+# Build the F06 MULTIOMICS BENCHMARK panel.
 def f06_multiomics_benchmark() -> None:
     d = read("Phase5B/foldwise_modality_summary.csv")
     for c in ["mean_MAE", "median_R2"]:
@@ -516,6 +526,7 @@ def f06_multiomics_benchmark() -> None:
     )
 
 
+# Build the F07 DRUG GAINS panel.
 def f07_drug_gains() -> None:
     d = read("Phase5B/foldwise_drug_summary.csv")
     for c in ["gain_vs_rna", "better_folds"]:
@@ -558,6 +569,7 @@ def f07_drug_gains() -> None:
     )
 
 
+# Build the F08 NUTLIN SHAP panel.
 def f08_nutlin_shap() -> None:
     d = read("Phase3B/shap_feature_importance.csv")
     d = d[(d.drug_name == "Nutlin-3a (-)") & (d.model == "AllFour")].copy()
@@ -604,6 +616,7 @@ def f08_nutlin_shap() -> None:
     )
 
 
+# Build the F09 SLFN11 panel.
 def f09_slfn11() -> None:
     d = read("Phase4C/paired_adjusted_association_evidence.csv")
     d = d[
@@ -679,6 +692,7 @@ def f09_slfn11() -> None:
     )
 
 
+# Build the F10 PRISM CONCORDANCE panel.
 def f10_prism_concordance() -> None:
     d = read(
         "Phase4A/cross_platform_shared_line_concordance.csv", dtype={"drug_id": str}
@@ -726,6 +740,7 @@ def f10_prism_concordance() -> None:
     )
 
 
+# Build the F11 MAPK ENRICHMENT panel.
 def f11_mapk_enrichment() -> None:
     d = read("Phase6A/focus_drug_cancer_enrichment_all.csv", dtype={"drug_id": str})
     ids = ["1014", "1060", "1062", "1372", "1564", "1736", "1908"]
@@ -783,6 +798,7 @@ def f11_mapk_enrichment() -> None:
     )
 
 
+# Build the F12 MAPK MOLECULAR panel.
 def f12_mapk_molecular() -> None:
     d = read(
         "Phase6C/all_within_cancer_molecular_associations.csv", dtype={"drug_id": str}
@@ -861,6 +877,7 @@ def f12_mapk_molecular() -> None:
     )
 
 
+# Build the F13 MAPK SIGNATURE ASSOC panel.
 def f13_mapk_signature_assoc() -> None:
     d = read(
         "Phase6C/all_within_cancer_molecular_associations.csv", dtype={"drug_id": str}
@@ -921,6 +938,7 @@ def f13_mapk_signature_assoc() -> None:
     )
 
 
+# Build the F14 SIGNATURE PREDICTION panel.
 def f14_signature_prediction() -> None:
     d = read("Phase6D/per_cancer_incremental_gains.csv", dtype={"drug_id": str})
     d["gain_signature_beyond_mutation"] = pd.to_numeric(
@@ -985,6 +1003,7 @@ def f14_signature_prediction() -> None:
     )
 
 
+# Build the F15 PPI panel.
 def f15_ppi() -> None:
     d = read("Phase6B/ppi_vs_multiomics_fold_scores.csv")
     d.MAE = pd.to_numeric(d.MAE, errors="coerce")
@@ -1024,6 +1043,7 @@ def f15_ppi() -> None:
     )
 
 
+# Write caption index.
 def write_caption_index() -> None:
     frame = pd.DataFrame(captions)
     frame.to_csv(
@@ -1044,6 +1064,7 @@ def write_caption_index() -> None:
     )
 
 
+# Run this analysis block and write its outputs.
 def main() -> None:
     builders = [
         f01_coverage,
