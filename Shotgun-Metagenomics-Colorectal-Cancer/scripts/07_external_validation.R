@@ -471,6 +471,7 @@ cohorts <- c(
 )
 
 
+# Extract species.
 extract_species <- function(x) {
   
   # Match the terminal species-level identifier.

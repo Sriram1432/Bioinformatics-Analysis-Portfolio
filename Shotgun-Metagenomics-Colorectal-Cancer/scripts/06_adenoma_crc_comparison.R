@@ -185,6 +185,7 @@ P <- sweep(
   "/"
 )
 
+# Replace exact zeros using the stated detection rule.
 replace_zeros <- function(p) {
   
   zeros <- p == 0
@@ -300,6 +301,7 @@ contrasts <- list(
 )
 
 
+# Retrieve contrast.
 get_contrast <- function(name, contrast) {
   
   beta <- as.numeric(
@@ -544,6 +546,7 @@ stopifnot(
 
 P <- sweep(X, 2, colSums(X), "/")
 
+# Replace exact zeros using the stated detection rule.
 replace_zeros <- function(p) {
   
   zero <- p == 0
@@ -619,6 +622,7 @@ stopifnot(
 residual_matrix <- as.matrix(fit$residuals)
 
 
+# Build contrast.
 make_contrast <- function(
     adenoma = 0,
     crc = 0
@@ -650,6 +654,7 @@ contrasts <- list(
   )
 )
 
+# Estimate the requested model contrast and uncertainty.
 estimate_contrast <- function(label, contrast) {
   
   estimate <- as.numeric(

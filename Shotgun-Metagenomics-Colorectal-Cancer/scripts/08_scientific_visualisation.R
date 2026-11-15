@@ -24,14 +24,17 @@ ht_opt$message <- FALSE
 PALETTE <- c(healthy='#087F8C',adenoma='#E3A546',CRC='#AC3656')
 POS <- '#B54458'; NEG <- '#137D91'; DARK <- '#181C27'
 manifest <- data.table(Figure=character(),Title=character(),Status=character(),File=character(),Note=character())
+# Store one audit record in the running manifest.
 record <- function(id,title,status,path='',note='') manifest <<- rbind(manifest,data.table(Figure=id,Title=title,Status=status,File=path,Note=note))
 KEEP_FIGURES <- sprintf('Figure_%02d', c(1:6, 8:13, 15, 17:24))
 requested_figures <- Sys.getenv('PROJECT4_FIGURES', unset='')
 if(nzchar(requested_figures)) KEEP_FIGURES <- trimws(strsplit(requested_figures, ',', fixed=TRUE)[[1]])
+# Run a figure builder and record its output.
 with_fig <- function(id,title,fun) {
   if (!id %in% KEEP_FIGURES) return(invisible(NULL))
   tryCatch({p <- fun(); record(id,title,'CREATED',p,'')},error=function(e){record(id,title,'SKIPPED','',conditionMessage(e))})
 }
+# Define the shared plotting theme.
 base_theme <- function(sz=14) theme_minimal(base_size=sz)+theme(
   text=element_text(colour='black',face='bold'),
   axis.title=element_text(colour='black',face='bold'),axis.text=element_text(colour='black',face='bold'),
@@ -41,12 +44,14 @@ base_theme <- function(sz=14) theme_minimal(base_size=sz)+theme(
   panel.grid.minor=element_blank(),panel.grid.major.y=element_blank(),
   plot.background=element_rect(fill='white',colour=NA),panel.background=element_rect(fill='white',colour=NA),
   strip.text=element_text(face='bold',colour='black'),plot.title.position='plot')
+# Save the current plot using the project output settings.
 save_plot <- function(id,plot,w=12,h=8) {
   path <- file.path(OUT,paste0(id,'.webp'))
   ggplot2::ggsave(path,plot,width=w,height=h,dpi=220,device=ragg::agg_webp,bg='white',limitsize=FALSE)
   path
 }
 heat_col <- circlize::colorRamp2(c(0,0.5,1),c('#F5F7FA','#9EC8DB','#163E6A'))
+# Export the current heatmap.
 heat_save <- function(id,mat,anno,header,w=15,h=8,legend='Log10 relative abundance',breaks=NULL,annotation_legend=TRUE,legend_side='right') {
   stopifnot(ncol(mat)==nrow(anno),identical(colnames(mat),anno$sample))
   q <- if (is.null(breaks)) as.numeric(quantile(mat,c(0,.50,.98),na.rm=TRUE)) else breaks
@@ -207,6 +212,7 @@ chosen_md <- core[match(chosen,sample)]
 chosen_md <- chosen_md[order(group,study_accession,sample)]
 core_ord<-core[order(group,study_accession,sample)]
 
+# Convert long-form results into a heatmap matrix.
 to_heat <- function(samples,ids=features) {
   X <- t(relative[match(samples,rownames(relative)),ids,drop=FALSE])
   positives <- relative[,ids,drop=FALSE]
@@ -411,6 +417,7 @@ if(file.exists(stage5_annotations)) {
   }
 }
 module_priority <- names(verified_module_descriptions)
+# Create readable labels for functional-module identifiers.
 module_display <- function(ids) {
  if(is.null(module_labels))return(ids)
  z<-module_labels[ids];z[is.na(z)|!nzchar(z)]<-ids[is.na(z)|!nzchar(z)]
@@ -482,6 +489,7 @@ with_fig('Figure_17','Discovery and external community association effect sizes'
  external_file<-file.path(ROOT,'results','stage9','beta_diversity_results.rds')
  if(!file.exists(discovery_file) || !file.exists(external_file))stop('Saved Stage 9 PERMANOVA objects unavailable')
  discovery_results<-readRDS(discovery_file);external_results<-readRDS(external_file)
+ # Calculate variance explained by the supplied groups.
  group_r2<-function(x){
   if(!'Group' %in% rownames(x) || !'R2' %in% colnames(x))stop('Group R2 absent from saved PERMANOVA result')
   as.numeric(x['Group','R2'])
