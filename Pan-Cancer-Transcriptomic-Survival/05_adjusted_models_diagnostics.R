@@ -2,6 +2,7 @@
 # matched-sample estimates, proportional-hazards diagnostics and influence sensitivity without
 # presenting selected candidates as validated biomarkers.  Run with: Rscript
 # 05_adjusted_models_diagnostics.R
+# Adjusted and unadjusted models use matched samples when their estimates are compared.
 
 options(stringsAsFactors = FALSE)
 

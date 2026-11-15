@@ -1,6 +1,7 @@
 # Analyse directional pathway overrepresentation and ranked enrichment.  Uses the cancer-specific
 # tested universe, signed Cox rankings and fixed MSigDB package version used by the completed
 # analysis.  Run with: Rscript 07_pathway_analysis.R
+# Pathway results are interpreted within cancer before cross-cancer recurrence is summarised.
 
 options(stringsAsFactors = FALSE)
 

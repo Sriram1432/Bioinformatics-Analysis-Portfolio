@@ -1,6 +1,7 @@
 # Regenerate the fifteen-figure transcriptomic survival atlas from saved numerical outputs.
 # Reconstructs three prespecified Kaplan-Meier displays and writes WebP and SVG exports.
 # Run with: Rscript 08_figures.R
+# Plotting code does not alter the saved model estimates or patient-level analysis objects.
 
 options(stringsAsFactors = FALSE)
 

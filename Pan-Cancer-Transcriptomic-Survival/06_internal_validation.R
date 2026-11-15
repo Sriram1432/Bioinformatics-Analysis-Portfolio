@@ -1,6 +1,7 @@
 # Evaluate incremental survival discrimination under repeated cross-validation.  Separates
 # outcome-conditioned candidate assessment from training-only feature selection and uses the
 # corrected BRCA fold handling.  Run with: Rscript 06_internal_validation.R
+# Fold failures remain in the audit output rather than being silently excluded from summaries.
 
 options(stringsAsFactors = FALSE)
 
@@ -39,7 +40,7 @@ K <- 5L
 R <- 2L
 required <- function(f) {
     if (!file.exists(f))
-        stop("Required validated file missing: ", f)
+        stop("Required analysis file missing: ", f)
     f
 }
 clean_chr <- function(x) {
