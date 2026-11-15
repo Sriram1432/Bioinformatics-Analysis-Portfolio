@@ -44,10 +44,12 @@ overview = []
 errors = []
 
 
+# Write a progress message to the analysis log.
 def log(msg=""):
     report.append(str(msg))
 
 
+# Run the specimen-level analysis.
 def analyze(sample, symbols):
     X = sparse.load_npz(S2 / f"{sample}_log1p_CP10K_spots_x_genes.npz").tocsr()
     obs = pd.read_csv(S1 / f"{sample}_spot_metadata.csv", index_col="barcode")
@@ -398,10 +400,12 @@ cluster_rows = []
 errors = []
 
 
+# Write a progress message to the analysis log.
 def log(message=""):
     report.append(str(message))
 
 
+# Save a tissue map for the selected annotation.
 def save_map(sample, label, obs, values):
     fig, ax = plt.subplots(figsize=(7.6, 6.9))
     x = pd.to_numeric(obs["array_col"]).to_numpy(dtype=float)
@@ -438,6 +442,7 @@ def save_map(sample, label, obs, values):
     plt.close(fig)
 
 
+# Run the specimen-level analysis.
 def analyse(sample, genes):
     obs = pd.read_csv(S1 / f"{sample}_spot_metadata.csv", index_col="barcode")
     X = sparse.load_npz(S2 / f"{sample}_log1p_CP10K_spots_x_genes.npz").tocsr()

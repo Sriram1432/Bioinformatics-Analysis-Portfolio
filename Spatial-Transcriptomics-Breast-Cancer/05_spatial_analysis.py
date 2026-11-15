@@ -45,10 +45,12 @@ RANGE_LABELS = ["<2", "2–<5", "5–<10", ">=10"]
 REPORT = []
 
 
+# Write a progress message to the analysis log.
 def log(s=""):
     REPORT.append(str(s))
 
 
+# Save a spatial scatter plot with consistent styling.
 def save_scatter(df, variable, name, title, cmap="viridis"):
     fig, ax = plt.subplots(figsize=(8, 6.6))
     c = df[variable].to_numpy(dtype=float)
@@ -378,10 +380,12 @@ GROUPS = []
 ERRORS = []
 
 
+# Write a progress message to the analysis log.
 def log(s=""):
     REPORT.append(str(s))
 
 
+# Calculate rank correlation using complete pairs.
 def rank_corr(a, b):
     a = np.asarray(a, dtype=float)
     b = np.asarray(b, dtype=float)
@@ -391,6 +395,7 @@ def rank_corr(a, b):
     return float(spearmanr(a[good], b[good]).statistic)
 
 
+# Plot one spatial signature across the tissue coordinates.
 def plot_signature(df, sample, variable, label):
     x, y = df["array_col"].to_numpy(), df["array_row"].to_numpy()
     v = df[variable].to_numpy(dtype=float)
@@ -434,6 +439,7 @@ def plot_signature(df, sample, variable, label):
     plt.close(fig)
 
 
+# Plot the fitted spatial gradient for one signature.
 def plot_gradient(band_df, sample):
     fig, ax = plt.subplots(figsize=(7.5, 5.2))
     for signature in ["T_cell_associated", "B_plasma_associated", "Epithelial"]:
@@ -461,6 +467,7 @@ def plot_gradient(band_df, sample):
     plt.close(fig)
 
 
+# Run the specimen-level analysis.
 def analyse(sample):
     obs = pd.read_csv(INPUT_META / f"{sample}_spot_metadata.csv", index_col="barcode")
     score = pd.read_csv(INPUT_SCORES / f"{sample}_spatial_programme_scores.csv")
@@ -658,16 +665,19 @@ GROUPS = {"DCIS": "DCIS", "Invasive cancer + lymphocytes": "Invasive-associated 
 REPORT = []
 
 
+# Write a progress message to the analysis log.
 def log(s=""):
     REPORT.append(str(s))
 
 
+# Return the median of finite observations.
 def med(x):
     a = pd.to_numeric(x, errors="coerce").to_numpy(dtype=float)
     a = a[np.isfinite(a)]
     return float(np.median(a)) if len(a) else np.nan
 
 
+# Calculate a finite-pair correlation.
 def corr(a, b):
     x, y = np.asarray(a, dtype=float), np.asarray(b, dtype=float)
     valid = np.isfinite(x) & np.isfinite(y)
@@ -956,16 +966,19 @@ K_VALUES = [4, 6, 10]
 report, spatial_rows, gradient_rows, contrast_rows, failures = [], [], [], [], []
 
 
+# Write a progress message to the analysis log.
 def log(x=""):
     report.append(str(x))
 
 
+# Calculate a Spearman correlation from complete pairs.
 def rho(x, y):
     with np.errstate(invalid="ignore"):
         v = float(spearmanr(x, y).statistic)
     return v
 
 
+# Load one specimen and its spatial annotations.
 def load_sample(sample):
     meta = pd.read_csv(M / f"{sample}_spot_metadata.csv", index_col="barcode")
     scores = pd.read_csv(S / f"{sample}_spatial_programme_scores.csv")
@@ -993,6 +1006,7 @@ def load_sample(sample):
     return df
 
 
+# Remove the fitted library-depth component from a score.
 def residualize(y, depth):
     # Diagnostic removal of linear association with log library size, not a
     # claim of unbiased normalization. Original scores remain unchanged.
@@ -1001,6 +1015,7 @@ def residualize(y, depth):
     return y - d @ b
 
 
+# Fit the distance-gradient model and return its summary.
 def gradient(sample, df, anchor, programme):
     group = df["Classification"].fillna("[MISSING]").astype(str).to_numpy()
     mask = group == anchor

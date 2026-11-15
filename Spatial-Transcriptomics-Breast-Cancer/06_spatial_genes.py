@@ -38,10 +38,12 @@ BATCH = 160
 report, summaries, failures = [], [], []
 
 
+# Write a progress message to the analysis log.
 def log(s=""):
     report.append(str(s))
 
 
+# Apply Benjamini-Hochberg correction to finite p-values.
 def bh(p):
     p = np.asarray(p, dtype=np.float64)
     o = np.argsort(p, kind="stable")
@@ -52,6 +54,7 @@ def bh(p):
     return q
 
 
+# Build a symmetric neighbour graph from spot coordinates.
 def graph_from_coordinates(obs):
     xy = obs[["array_row", "array_col"]].to_numpy(dtype=np.float64)
     if not np.isfinite(xy).all() or np.unique(xy, axis=0).shape[0] != len(xy):
@@ -70,6 +73,7 @@ def graph_from_coordinates(obs):
     return W
 
 
+# Calculate Moran statistics for each expression feature.
 def moran_for_matrix(W, A, factor):
     # Columns are already centred. Each column gets its own variance divisor.
     numerator = np.sum(A * (W @ A), axis=0, dtype=np.float64)
