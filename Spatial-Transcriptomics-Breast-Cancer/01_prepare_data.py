@@ -42,10 +42,12 @@ MAX_DISPLAY_MEMBERS = 30
 report = []
 
 
+# Write a progress message to the analysis log.
 def log(message=""):
     report.append(str(message))
 
 
+# Format size.
 def format_size(size):
     return f"{size / 1024**2:,.2f} MB"
 
@@ -405,10 +407,12 @@ annotation_counts = []
 errors = []
 
 
+# Write a progress message to the console.
 def say(s=""):
     summary.append(str(s))
 
 
+# Retrieve member.
 def get_member(tar, name):
     try:
         member = tar.getmember(name)
@@ -432,6 +436,7 @@ def read_maybe_gzip(tar, name):
     return wrapped
 
 
+# Read selected columns from a compressed TSV archive member.
 def tsv_gz(tar, name, columns):
     with read_maybe_gzip(tar, name) as stream:
         data = pd.read_csv(stream, sep="\t", header=None, dtype=str)
@@ -445,6 +450,7 @@ def tsv_gz(tar, name, columns):
     return data[columns]
 
 
+# Calculate a percentile from finite values.
 def percentile(values, q):
     return float(np.percentile(values, q)) if len(values) else float("nan")
 
@@ -701,10 +707,12 @@ reports, stats, gene_sets, symbol_sets, errors, issues = [], [], {}, {}, [], []
 spot_tables = []
 
 
+# Record a short audit note.
 def note(x=""):
     reports.append(str(x))
 
 
+# Open a compressed archive member for reading.
 def member_stream(tar, path):
     raw = tar.extractfile(tar.getmember(path))
     if raw is None:
@@ -715,11 +723,13 @@ def member_stream(tar, path):
     return buf
 
 
+# Read the source table while preserving its schema.
 def read_tsv(tar, path):
     with member_stream(tar, path) as f:
         return pd.read_csv(f, sep="\t", header=None, dtype=str, keep_default_na=False)
 
 
+# Return the standard quartiles of a numeric vector.
 def quartile(a):
     if len(a) == 0:
         return "NA"
@@ -999,10 +1009,12 @@ SAMPLES = ["1142243F", "1160920F", "CID4290", "CID4465", "CID44971", "CID4535"]
 report = []
 
 
+# Write a progress message to the analysis log.
 def log(s=""):
     report.append(str(s))
 
 
+# Open a member of the source archive as a binary stream.
 def fileobj(tf, path):
     raw = tf.extractfile(tf.getmember(path))
     if raw is None:
@@ -1011,6 +1023,7 @@ def fileobj(tf, path):
     return gzip.GzipFile(fileobj=buf) if buf.peek(2)[:2] == b"\x1f\x8b" else buf
 
 
+# Read and normalise the supplied gene symbols.
 def read_symbols(tf, sample):
     p = f"filtered_count_matrices/{sample}_filtered_count_matrix/features.tsv.gz"
     with fileobj(tf, p) as f:
@@ -1022,6 +1035,7 @@ def read_symbols(tf, sample):
     return sym
 
 
+# Load and validate one specimen from the source archive.
 def initial_load(tf, sample):
     p = f"filtered_count_matrices/{sample}_filtered_count_matrix"
     sym = read_symbols(tf, sample)

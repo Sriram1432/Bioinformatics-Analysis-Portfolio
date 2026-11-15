@@ -55,10 +55,12 @@ ERRORS = []
 COMPARISONS = []
 
 
+# Write a progress message to the analysis log.
 def log(s=""):
     REPORT.append(str(s))
 
 
+# Calculate agreement between clusters and pathology labels.
 def nmi_path(labels, pathology):
     p = pd.Series(pathology).fillna("[MISSING]").astype(str).to_numpy()
     mask = p != "[MISSING]"
@@ -67,6 +69,7 @@ def nmi_path(labels, pathology):
     return float(normalized_mutual_info_score(p[mask], labels[mask]))
 
 
+# Measure the association between cluster labels and sequencing depth.
 def eta_depth(labels, depth):
     mu = depth.mean()
     ss = np.square(depth - mu).sum()
@@ -83,6 +86,7 @@ def eta_depth(labels, depth):
     )
 
 
+# Build the expression-neighbour graph used for clustering.
 def make_graph(z):
     nn = NearestNeighbors(n_neighbors=K + 1, metric="euclidean", n_jobs=-1)
     nn.fit(z)
@@ -110,6 +114,7 @@ def make_graph(z):
     return labels
 
 
+# Measure agreement between clusters and spatial neighbours.
 def spatial_coherence(obs, labels):
     # Spatial-neighbourhood test is DESCRIPTIVE only; tissue spot density is irregular.
     xy = obs[["array_row", "array_col"]].to_numpy(dtype=float)
@@ -125,6 +130,7 @@ def spatial_coherence(obs, labels):
     return observed, random_baseline
 
 
+# Draw the requested summary figure.
 def figure(sample, method, emb, labels, obs):
     fig, axes = plt.subplots(1, 2, figsize=(12, 5), constrained_layout=True)
     axes[0].scatter(

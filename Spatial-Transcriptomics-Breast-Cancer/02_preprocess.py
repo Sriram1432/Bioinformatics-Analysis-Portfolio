@@ -33,10 +33,12 @@ summary = []
 failures = []
 
 
+# Write a progress message to the analysis log.
 def log(x=""):
     report.append(str(x))
 
 
+# Format quartiles as a compact report string.
 def qstr(x):
     q = np.quantile(x, [0, 0.25, 0.5, 0.75, 1])
     return f"min={q[0]:,.2f}; Q1={q[1]:,.2f}; median={q[2]:,.2f}; Q3={q[3]:,.2f}; max={q[4]:,.2f}"
@@ -200,6 +202,7 @@ SEED = 20261101
 messages, results, errors = [], [], []
 
 
+# Write a progress message to the analysis log.
 def log(line=""):
     messages.append(str(line))
 
@@ -369,10 +372,12 @@ MIN_CATEGORY_N = 20  # for readable legends and descriptive category association
 messages, rows, errors = [], [], []
 
 
+# Write a progress message to the analysis log.
 def log(x=""):
     messages.append(str(x))
 
 
+# Calculate variance explained by the supplied grouping.
 def eta_squared(x, group):
     # Descriptive fraction of between-annotation variance; NOT an independence-based significance test.
     df = pd.DataFrame(
@@ -390,6 +395,7 @@ def eta_squared(x, group):
     return ss_between / ss_all
 
 
+# Save the current plot using the project output settings.
 def save_plot(fig, dest):
     fig.savefig(dest, dpi=230, bbox_inches="tight", format="webp")
     plt.close(fig)
@@ -584,10 +590,12 @@ MIN_GROUP = 20
 report, summary, errors = [], [], []
 
 
+# Write a progress message to the analysis log.
 def log(s=""):
     report.append(str(s))
 
 
+# Calculate variance explained by the supplied grouping.
 def eta2(values, groups):
     v = np.asarray(values, dtype=np.float64)
     g = np.asarray(groups, dtype=str)
@@ -608,6 +616,7 @@ def eta2(values, groups):
     )
 
 
+# Calculate a finite-pair correlation.
 def correlation(a, b):
     a, b = np.asarray(a, float), np.asarray(b, float)
     if np.std(a) == 0 or np.std(b) == 0:
