@@ -36,27 +36,32 @@ MAX_INSPECTION_ROWS = 1200  # sample only: large omics files
 PRISM_CHUNK = 150_000
 
 
+# Record a short audit note.
 def note(section, key, value):
     s = str(value).replace("\n", " | ")
     REPORT.append((section, key, s[:1700]))
 
 
+# Record a warning without interrupting the audit.
 def warn(stage, error):
     msg = f"{stage}: {str(error)[:450]}"
     ISSUES.append(msg)
     note("WARNINGS", stage, msg)
 
 
+# Trim text and represent blank values as missing.
 def tidy(x):
     return re.sub(r"[^a-z0-9]+", "_", str(x).lower()).strip("_")
 
 
+# Standardise model identifiers for table joins.
 def clean_id(s):
     x = s.astype("string").str.strip().str.upper()
     x = x.str.replace(r"\.0$", "", regex=True)
     return x.mask(x.isin(["", "NAN", "NONE", "<NA>", "NULL"]))
 
 
+# Match col.
 def match_col(df, exact=(), words=(), excludes=()):
     d = {tidy(c): c for c in df.columns}
     for c in exact:
@@ -70,6 +75,7 @@ def match_col(df, exact=(), words=(), excludes=()):
     return None
 
 
+# Return the most frequent non-missing values.
 def safe_top(s, n=12):
     return "; ".join(
         f"{str(k)[:38]}={int(v):,}"
@@ -81,6 +87,7 @@ def safe_top(s, n=12):
     )
 
 
+# Summarise the finite values of a numeric series.
 def qstats(s):
     x = pd.to_numeric(s, errors="coerce").replace([np.inf, -np.inf], np.nan).dropna()
     if not len(x):
@@ -89,6 +96,7 @@ def qstats(s):
     return f"n={len(x):,}; median={q.loc[0.5]:.4g}; q05={q.loc[0.05]:.4g}; q95={q.loc[0.95]:.4g}; min={q.loc[0]:.4g}; max={q.loc[1]:.4g}"
 
 
+# Read a delimited table with encoding fallbacks.
 def csv_read(path, nrows=None, chunksize=None):
     kw = dict(low_memory=False)
     if nrows is not None:
@@ -101,6 +109,7 @@ def csv_read(path, nrows=None, chunksize=None):
         return pd.read_csv(path, encoding="latin1", **kw)
 
 
+# Read a bounded preview of a source table.
 def peek(path, n=MAX_INSPECTION_ROWS):
     suf = path.suffix.lower()
     if suf in (".xlsx", ".xls"):
@@ -146,10 +155,12 @@ def peek(path, n=MAX_INSPECTION_ROWS):
     return None
 
 
+# Write a result table to the current output directory.
 def save(df, name):
     df.to_csv(OUT / name, index=False)
 
 
+# Inventory source files and write the audit table.
 def inventory():
     note("SETUP", "Project folder", str(ROOT))
     note("SETUP", "Python / Pandas", f"{sys.version.split()[0]} / {pd.__version__}")
@@ -190,6 +201,7 @@ def inventory():
     note("SETUP", "Source files", len(CATALOG))
 
 
+# Locate a required input file.
 def getfile(fragment):
     files = [
         p for p in DATA.iterdir() if p.is_file() and fragment.lower() in p.name.lower()
@@ -197,6 +209,7 @@ def getfile(fragment):
     return max(files, key=lambda p: p.stat().st_mtime) if files else None
 
 
+# Read small.
 def read_small(fragment, required=False):
     p = getfile(fragment)
     if not p:
@@ -222,6 +235,7 @@ def read_small(fragment, required=False):
         return None
 
 
+# Prepare the cell-line metadata used for assay matching.
 def model_meta():
     df = read_small("model_list_", True)
     if df is None:
@@ -291,6 +305,7 @@ def model_meta():
     return result
 
 
+# Audit and harmonise the GDSC response table.
 def gdsc(meta):
     df = read_small("GDSC2_fitted_dose_response_", True)
     if df is None:
@@ -366,6 +381,7 @@ def gdsc(meta):
     return (df, col)
 
 
+# Read and summarise one PRISM response source.
 def prism_one(fragment, section):
     p = getfile(fragment)
     if not p:
@@ -451,6 +467,7 @@ def prism_one(fragment, section):
         return None
 
 
+# Compare harmonised PRISM and GDSC coverage.
 def prism(gdsc_result, meta):
     prism_one("secondary-screen-dose-response-curve-parameters", "PRISM SECONDARY")
     secondary = read_small("secondary-screen-cell-line-info")
@@ -488,6 +505,7 @@ def prism(gdsc_result, meta):
         )
 
 
+# Summarise assay coverage across the model metadata.
 def omics_summaries(meta):
     specs = [
         ("rnaseq_merged", "RNA EXPRESSION"),
@@ -540,6 +558,7 @@ def omics_summaries(meta):
             warn(section, exc)
 
 
+# Run this analysis block and write its outputs.
 def main():
     inventory()
     if not DATA.exists():
@@ -639,15 +658,18 @@ REPORT = []
 ERRORS = []
 
 
+# Write a progress message to the analysis log.
 def log(section, message):
     REPORT.append(f"[{section}] {message}")
 
 
+# Record an exception with its analysis context.
 def report_error(section, error):
     ERRORS.append(f"{section}: {error}")
     log("WARNING", f"{section}: {error}")
 
 
+# Locate a source file by name prefix.
 def find_file(prefix):
     matches = sorted(
         p
@@ -661,6 +683,7 @@ def find_file(prefix):
     return matches[0]
 
 
+# Clean model identifiers while preserving missing values.
 def ids(series):
     return (
         series.astype("string")
@@ -672,16 +695,19 @@ def ids(series):
     )
 
 
+# Return the distinct non-missing model identifiers.
 def unique_ids(series):
     return set(ids(series))
 
 
+# Calculate a percentage with an empty-denominator safeguard.
 def percentage(n, total):
     if total == 0:
         return "N/A"
     return f"{100 * n / total:.2f}%"
 
 
+# Normalise name.
 def normalize_name(series):
     return (
         series.astype("string")
@@ -692,6 +718,7 @@ def normalize_name(series):
     )
 
 
+# Check that a table contains the required columns.
 def require_columns(df, columns, dataset):
     missing = [c for c in columns if c not in df.columns]
 
@@ -699,6 +726,7 @@ def require_columns(df, columns, dataset):
         raise ValueError(f"{dataset}: missing columns {missing}")
 
 
+# Write a result table to the current output directory.
 def save(df, filename):
     df.to_csv(OUT / filename, index=False)
 
@@ -709,6 +737,7 @@ def save(df, filename):
 
 
 @contextmanager
+# Open the selected CSV member from a ZIP archive.
 def zip_csv_stream(zip_path, preferred=None):
     with zipfile.ZipFile(zip_path) as archive:
         members = [
@@ -739,6 +768,7 @@ def zip_csv_stream(zip_path, preferred=None):
             yield stream, member
 
 
+# Read zip csv.
 def read_zip_csv(zip_path, preferred=None, **kwargs):
     with zip_csv_stream(zip_path, preferred) as (stream, member):
         sep = "\t" if member.lower().endswith(".tsv") else ","
@@ -746,6 +776,7 @@ def read_zip_csv(zip_path, preferred=None, **kwargs):
         return pd.read_csv(stream, sep=sep, low_memory=False, **kwargs)
 
 
+# Read a ZIP member header without loading the full table.
 def zip_header(zip_path, preferred):
     return read_zip_csv(zip_path, preferred=preferred, nrows=0).columns.tolist()
 

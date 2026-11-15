@@ -64,15 +64,18 @@ ISSUES = []
 START = time.time()
 
 
+# Write a progress message to the analysis log.
 def log(section, msg):
     REPORT.append(f"[{section}] {msg}")
 
 
+# Record a modelling issue for review.
 def issue(section, msg):
     ISSUES.append(f"{section}: {msg}")
     log("WARNING", f"{section}: {msg}")
 
 
+# Retrieve file.
 def get_file(prefix):
     files = sorted(
         p
@@ -86,11 +89,13 @@ def get_file(prefix):
     return files[0]
 
 
+# Normalise text for reliable identifier matching.
 def norm(s):
     x = s.astype("string").str.strip().str.upper().str.replace(r"\.0$", "", regex=True)
     return x.mask(x.isin(["", "<NA>", "NAN", "NONE"]))
 
 
+# Calculate held-out regression metrics.
 def metrics(y, pred):
     y, pred = np.asarray(y, float), np.asarray(pred, float)
     mask = np.isfinite(y) & np.isfinite(pred)
@@ -132,6 +137,7 @@ def format_selected_results(selected, cancer_baseline):
     return result
 
 
+# Create reproducible patient-group-aware data splits.
 def pick_group_splits(models):
     # Retain different derived cell lines from the same patient in ONE partition.
     patient = (
@@ -252,6 +258,7 @@ def read_expression(tpm_zip, matched_ids, training_ids):
     return pd.DataFrame(x, index=sidm, columns=chosen), info
 
 
+# Predict from training-set cancer-type means.
 def baseline_cancer_mean(train, other, key="cancer_type"):
     global_mean = float(train["AUC"].mean())
     avg = train.groupby(key)["AUC"].mean()
@@ -300,6 +307,7 @@ def fit_models(xtrain, ytrain, xval, seed):
     return fitted
 
 
+# Run this analysis block and write its outputs.
 def main():
     if not DATA.is_dir():
         raise FileNotFoundError(f"Data folder unavailable: {DATA}")
@@ -582,6 +590,7 @@ def main():
     )
 
 
+# Write the final model summary and completion message.
 def finish():
     text = "\n".join(
         [

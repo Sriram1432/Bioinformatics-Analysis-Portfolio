@@ -38,10 +38,12 @@ TOP_N = 15
 LOG = []
 
 
+# Write a progress message to the console.
 def say(tag, msg):
     LOG.append(f"[{tag}] {msg}")
 
 
+# Locate a source file using a case-insensitive name fragment.
 def name_file(prefix):
     hits = list(DATA.glob(prefix + "*"))
     if len(hits) != 1:
@@ -49,12 +51,14 @@ def name_file(prefix):
     return hits[0]
 
 
+# Normalise text for reliable identifier matching.
 def norm(s):
     return (
         s.astype("string").str.strip().str.upper().str.replace(r"\.0$", "", regex=True)
     )
 
 
+# Format a small table for console review.
 def short_rows(df, cols, n=TOP_N, decimals=4):
     if df.empty:
         return "No eligible results."
@@ -64,6 +68,7 @@ def short_rows(df, cols, n=TOP_N, decimals=4):
     return z.to_string(index=False)
 
 
+# Run this analysis block and write its outputs.
 def main():
     say(
         "DESIGN",
@@ -494,10 +499,12 @@ KNOWN = {
 }
 
 
+# Write a progress message to the console.
 def say(section, msg):
     LOG.append(f"[{section}] {msg}")
 
 
+# Locate a required result file.
 def f(prefix):
     p = sorted(DATA.glob(prefix + "*"))
     if len(p) != 1:
@@ -507,16 +514,19 @@ def f(prefix):
     return p[0]
 
 
+# Normalise text for reliable identifier matching.
 def norm(v):
     return (
         v.astype("string").str.strip().str.upper().str.replace(r"\.0$", "", regex=True)
     )
 
 
+# Format a numeric summary for reporting.
 def qfmt(p):
     return "NA" if not np.isfinite(p) else f"{p:.3e}"
 
 
+# Print a compact table for review.
 def show(df, cols, n=TOP):
     if df.empty:
         return "None"
@@ -527,6 +537,7 @@ def show(df, cols, n=TOP):
     )
 
 
+# Read selected columns from a ZIP-contained table.
 def zip_read_selected(zip_path, match, **kw):
     with zipfile.ZipFile(zip_path) as z:
         cand = [x for x in z.namelist() if match in Path(x).name]
@@ -538,6 +549,7 @@ def zip_read_selected(zip_path, match, **kw):
             return pd.read_csv(handle, **kw)
 
 
+# Retrieve expression.
 def get_expression(model_ids):
     zpath = f("rnaseq_merged_")
     member = "rnaseq_merged_rsem_tpm_"
@@ -594,6 +606,7 @@ def get_expression(model_ids):
     return genes, source
 
 
+# Test expression-response associations for selected genes.
 def expr_associations(expr, df):
     cells = df.model_id.to_list()
     X = expr.loc[:, cells].to_numpy(dtype=np.float64)
@@ -625,6 +638,7 @@ def expr_associations(expr, df):
     return ans
 
 
+# Load mutation events for the selected cell-line models.
 def mutations_for_models(model_ids):
     data = zip_read_selected(
         f("mutations_summary_"),
@@ -636,6 +650,7 @@ def mutations_for_models(model_ids):
     return data[data.model_id.isin(model_ids)].copy()
 
 
+# Test mutation-driver associations with drug response.
 def driver_associations(mut, df):
     # Presence is an annotated event; absence is not necessarily an independently verified negative.
     # Restrict mutation comparison to lines explicitly marked as covered by Sanger WES.
@@ -683,6 +698,7 @@ def driver_associations(mut, df):
     return ans, len(cov)
 
 
+# Load copy-number values for the selected genes and models.
 def cnv_for_selected(model_ids, selected_genes):
     zpath = f("cnv_summary_")
     rows = []
@@ -714,6 +730,7 @@ def cnv_for_selected(model_ids, selected_genes):
     )
 
 
+# Test copy-number associations in the selected models.
 def cnv_associations(cnv, df):
     ans = []
     y = df.set_index("model_id").AUC
@@ -737,6 +754,7 @@ def cnv_associations(cnv, df):
     return out
 
 
+# Run this analysis block and write its outputs.
 def main():
     say(
         "DESIGN",
