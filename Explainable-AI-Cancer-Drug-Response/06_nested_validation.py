@@ -40,16 +40,19 @@ LOG = []
 START = time.time()
 
 
+# Write a progress message to the analysis log.
 def log(k, v):
     LOG.append(f"[{k}] {v}")
 
 
+# Normalise text for reliable identifier matching.
 def norm(s):
     return (
         s.astype("string").str.strip().str.upper().str.replace(r"\.0$", "", regex=True)
     )
 
 
+# Locate a required source-data file.
 def datafile(prefix):
     candidates = list(DATA.glob(prefix + "*"))
     if len(candidates) != 1:
@@ -59,6 +62,7 @@ def datafile(prefix):
     return candidates[0]
 
 
+# Locate the saved multi-omics result directory.
 def phase3():
     file = ROOT / "04_multiomics_explainability.py"
     if not file.exists():
@@ -123,6 +127,7 @@ def read_all_rna(models):
     return pd.DataFrame(matrix.T, index=cols, columns=labels)
 
 
+# Rank continuous features using training-fold data.
 def rank_continuous(
     mat, indices, k, minimum_coverage=0.70, minimum_variance=1e-8, minimum_mean=None
 ):
@@ -138,6 +143,7 @@ def rank_continuous(
     return variances[valid].nlargest(k).index.tolist()
 
 
+# Select fold-specific feature sets for each modality.
 def feature_sets(mats, train_idx):
     selected = {
         "RNA": rank_continuous(mats["RNA"], train_idx, 256, 0.95, 0.01, 0.1),
@@ -158,6 +164,7 @@ def feature_sets(mats, train_idx):
     return selected
 
 
+# Fit a fold model and predict its held-out observations.
 def fit_predict(mats, sel, ti, vi, y, kind, seed):
     blocks = {
         "RNA": ["RNA"],
@@ -195,6 +202,7 @@ def fit_predict(mats, sel, ti, vi, y, kind, seed):
     return reg.predict(val)
 
 
+# Run this analysis block and write its outputs.
 def main():
     log(
         "DESIGN",

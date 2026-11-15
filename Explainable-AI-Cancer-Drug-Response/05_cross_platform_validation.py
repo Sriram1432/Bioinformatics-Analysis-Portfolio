@@ -34,10 +34,12 @@ START = time.time()
 FOCUS = {"1047": "Nutlin-3a (-)", "1003": "Camptothecin", "1060": "PD0325901"}
 
 
+# Write a progress message to the console.
 def say(k, s):
     REP.append(f"[{k}] {s}")
 
 
+# Locate a required input file.
 def file(fragment):
     a = list(DATA.glob(fragment + "*"))
     if len(a) != 1:
@@ -47,6 +49,7 @@ def file(fragment):
     return a[0]
 
 
+# Find the first column matching the requested aliases.
 def col(df, candidates, required=True):
     m = {re.sub(r"[^a-z0-9]", "", str(k).lower()): k for k in df.columns}
     for c in candidates:
@@ -58,12 +61,14 @@ def col(df, candidates, required=True):
     return None
 
 
+# Standardise an assay identifier.
 def ident(s):
     return (
         s.astype("string").str.strip().str.upper().str.replace(r"\.0$", "", regex=True)
     )
 
 
+# Normalise compound names for cross-platform matching.
 def names(s):
     return (
         s.astype("string")
@@ -74,6 +79,7 @@ def names(s):
     )
 
 
+# Create a readable label from a source field name.
 def pretty(df, cols, n=12):
     return (
         "No eligible records"
@@ -82,6 +88,7 @@ def pretty(df, cols, n=12):
     )
 
 
+# Run this analysis block and write its outputs.
 def main():
     say(
         "DESIGN",
@@ -424,16 +431,19 @@ EXTRA = {
 MARKERS = ["SLFN11", "TP53", "BRAF", "KRAS", "NRAS", "IL6", "RSPO3", "ETV5", "CDKN2A"]
 
 
+# Write a progress message to the console.
 def say(tag, msg):
     LOG.append(f"[{tag}] {msg}")
 
 
+# Clean model identifiers while preserving missing values.
 def ids(v):
     return (
         v.astype("string").str.strip().str.upper().str.replace(r"\.0$", "", regex=True)
     )
 
 
+# Normalise compound names for exact comparison.
 def normname(s):
     return (
         s.astype("string")
@@ -443,6 +453,7 @@ def normname(s):
     )
 
 
+# Locate a required result file.
 def f(prefix):
     files = list(DATA.glob(prefix + "*"))
     if len(files) != 1:
@@ -452,6 +463,7 @@ def f(prefix):
     return files[0]
 
 
+# Load a saved result table.
 def table(x, n=20):
     return (
         x.head(n).to_string(index=False, float_format=lambda y: f"{y:.5g}")
@@ -460,6 +472,7 @@ def table(x, n=20):
     )
 
 
+# Calculate a Spearman correlation and its p-value.
 def rho_p(x, y):
     a = np.asarray(x, dtype=float)
     b = np.asarray(y, dtype=float)
@@ -470,6 +483,7 @@ def rho_p(x, y):
     return int(ok.sum()), float(res.statistic), float(res.pvalue)
 
 
+# Run this analysis block and write its outputs.
 def main():
     say(
         "DESIGN",
@@ -958,16 +972,19 @@ MIN_GROUP = 12
 MIN_OVERALL = 35
 
 
+# Write a progress message to the console.
 def say(k, x):
     LOG.append(f"[{k}] {x}")
 
 
+# Standardise an assay identifier.
 def ident(s):
     return (
         s.astype("string").str.strip().str.upper().str.replace(r"\.0$", "", regex=True)
     )
 
 
+# Locate a required input file.
 def file(prefix):
     a = list(DATA.glob(prefix + "*"))
     if len(a) != 1:
@@ -977,6 +994,7 @@ def file(prefix):
     return a[0]
 
 
+# Print a compact table for review.
 def show(df, n=16):
     return (
         "No eligible data"
@@ -985,6 +1003,7 @@ def show(df, n=16):
     )
 
 
+# Calculate Spearman correlation when enough paired values exist.
 def safe_spearman(x, y, min_n=12):
     a = np.asarray(x, float)
     b = np.asarray(y, float)
@@ -1082,6 +1101,7 @@ def load_full_rna(models):
     return wide
 
 
+# Run this analysis block and write its outputs.
 def main():
     say(
         "DESIGN",

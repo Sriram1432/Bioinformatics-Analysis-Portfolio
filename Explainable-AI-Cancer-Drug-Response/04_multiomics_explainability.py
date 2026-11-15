@@ -42,16 +42,19 @@ REPORT = []
 T0 = time.time()
 
 
+# Write a progress message to the analysis log.
 def log(k, msg):
     REPORT.append(f"[{k}] {msg}")
 
 
+# Normalise text for reliable identifier matching.
 def norm(s):
     return (
         s.astype("string").str.strip().str.upper().str.replace(r"\.0$", "", regex=True)
     )
 
 
+# Locate a required input file.
 def file(prefix):
     a = list(DATA.glob(prefix + "*"))
     if len(a) != 1:
@@ -61,6 +64,7 @@ def file(prefix):
     return a[0]
 
 
+# Open the matching CSV member from an assay archive.
 def zipcsv(path, fragment, **kw):
     with zipfile.ZipFile(path) as z:
         a = [
@@ -74,6 +78,7 @@ def zipcsv(path, fragment, **kw):
             return pd.read_csv(stream, **kw)
 
 
+# Format values for concise audit output.
 def fmt(df, cols, n=20):
     if df.empty:
         return "No eligible rows"
@@ -94,6 +99,7 @@ def choose_features(mat, training_ids, k, kind, min_coverage=0.65):
     return chosen
 
 
+# Read proteome.
 def read_proteome(models):
     path = file("Proteomics_")
     with zipfile.ZipFile(path) as z:
@@ -147,6 +153,7 @@ def read_proteome(models):
     return wide
 
 
+# Read cnv.
 def read_cnv(models):
     df = zipcsv(
         file("cnv_summary_"),
@@ -178,6 +185,7 @@ def read_cnv(models):
     ).astype("float32")
 
 
+# Read mutation.
 def read_mutation(models):
     df = zipcsv(
         file("mutations_summary_"),
@@ -200,6 +208,7 @@ def read_mutation(models):
     return x
 
 
+# Fit one modality model on matched training and validation samples.
 def trial_model(xtr, ytr, xva, yva, tag):
     # Fit missing-value and scaling transformations on TRAIN only.
     with warnings.catch_warnings():
@@ -231,6 +240,7 @@ def trial_model(xtr, ytr, xva, yva, tag):
     return float(mean_absolute_error(yva, yp)), float(r2_score(yva, yp)), yp, reg
 
 
+# Run this analysis block and write its outputs.
 def main():
     log(
         "DESIGN",
@@ -586,16 +596,19 @@ REPORT = []
 START = time.time()
 
 
+# Write a progress message to the analysis log.
 def log(tag, s):
     REPORT.append(f"[{tag}] {s}")
 
 
+# Normalise text for reliable identifier matching.
 def norm(s):
     return (
         s.astype("string").str.strip().str.upper().str.replace(r"\.0$", "", regex=True)
     )
 
 
+# Load a saved result table.
 def tab(df, n=15):
     return (
         df.head(n).to_string(index=False, float_format=lambda x: f"{x:.5g}")
@@ -609,6 +622,7 @@ def tab(df, n=15):
 p3a = sys.modules[__name__]
 
 
+# Fit model.
 def fit_model(xtrain, ytrain, seed):
     reg = XGBRegressor(
         n_estimators=240,
@@ -628,6 +642,7 @@ def fit_model(xtrain, ytrain, seed):
     return reg
 
 
+# Fit imputation and scaling on training data only.
 def preprocess(train, val):
     with warnings.catch_warnings():
         warnings.filterwarnings(
@@ -642,6 +657,7 @@ def preprocess(train, val):
     )
 
 
+# Build data.
 def make_data():
     splits = pd.read_csv(P2 / "model_splits.csv")
     splits.model_id = norm(splits.model_id)
@@ -727,6 +743,7 @@ def make_data():
     return responses, s, trids, vaids, features
 
 
+# Calculate SHAP values for the fitted tree model.
 def shap_values(reg, x):
     # XGBoost TreeSHAP built in; no optional shap package required.
     contrib = reg.get_booster().predict(DMatrix(x), pred_contribs=True)
@@ -735,6 +752,7 @@ def shap_values(reg, x):
     return contrib[:, :-1], contrib[:, -1], err
 
 
+# Run this analysis block and write its outputs.
 def main():
     log(
         "DESIGN",
